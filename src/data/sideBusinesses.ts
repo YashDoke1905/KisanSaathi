@@ -1,0 +1,855 @@
+export type SideBusinessCategory =
+  | "Livestock"
+  | "Poultry"
+  | "Fisheries"
+  | "Organic_Inputs"
+  | "Apiary"
+  | "Horticulture"
+  | "Mechanization"
+  | "Agro_Processing"
+  | "Nursery";
+
+export type WaterNeedLevel = "Low" | "Medium" | "High" | "Zero";
+export type RiskLevel = "Low" | "Medium" | "High";
+
+export interface ItemizedCostItem {
+  nameMr: string;
+  nameEn: string;
+  cost: number;
+}
+
+export interface AgroEcologicalSynergy {
+  source: string;
+  benefitMr: string;
+  benefitEn: string;
+  savingsEstimatedPerYear: number;
+}
+
+export interface SideBusinessDef {
+  id: string;
+  titleEn: string;
+  titleMr: string;
+  titleHi: string;
+  category: SideBusinessCategory;
+  categoryLabelMr: string;
+  categoryLabelEn: string;
+
+  // Economics
+  setupCost: number; // Initial capital in INR
+  monthlyOperatingCost: number; // Feed, energy, supplies
+  monthlyGrossRevenue: number;
+  expectedMonthlyProfit: number; // Net monthly cash inflow
+  annualProfit: number;
+  paybackPeriodMonths: number;
+  roiPercent: number;
+  gestationPeriodDays: number; // Days to first cash inflow
+
+  // Operational Constraints
+  dailyLabourHours: number;
+  waterNeed: WaterNeedLevel;
+  waterReqLitresPerDay: number;
+  spaceRequiredDescMr: string;
+  spaceRequiredDescEn: string;
+  riskLevel: RiskLevel;
+
+  // Government Assistance
+  subsidySchemeNameMr: string;
+  subsidySchemeNameEn: string;
+  subsidyPercent: number; // e.g. 50%
+  maxSubsidyAmount: number;
+  officialSchemePortalUrl: string;
+
+  // Local Agronomic & Market Fit
+  preferredDistricts: string[]; // Maharashtra districts or 'all'
+  marketChannelsMr: string[];
+  marketChannelsEn: string[];
+  setupStepsMr: string[];
+  setupStepsEn: string[];
+  capitalCostBreakdown: ItemizedCostItem[];
+  synergies: AgroEcologicalSynergy[];
+  descriptionMr: string;
+  descriptionEn: string;
+  lastVerifiedDate: string;
+}
+
+export const VERIFIED_SIDE_BUSINESSES: SideBusinessDef[] = [
+  {
+    id: "dairy-two-cows",
+    titleEn: "Two-Cow Dairy Unit (Gir / HF Crossbreed)",
+    titleMr: "दुग्धव्यवसाय (२ देशी गीर किंवा एच.एफ. संकरित गायी)",
+    titleHi: "डेयरी व्यवसाय (२ गायी)",
+    category: "Livestock",
+    categoryLabelMr: "पशुपालन व दुग्धव्यवसाय",
+    categoryLabelEn: "Livestock & Dairy",
+    setupCost: 160000,
+    monthlyOperatingCost: 9500,
+    monthlyGrossRevenue: 24000,
+    expectedMonthlyProfit: 14500,
+    annualProfit: 174000,
+    paybackPeriodMonths: 11,
+    roiPercent: 108.7,
+    gestationPeriodDays: 15,
+    dailyLabourHours: 2.0,
+    waterNeed: "Medium",
+    waterReqLitresPerDay: 150,
+    spaceRequiredDescMr: "४०० चौ. फूट हवेशीर गोठा व २ गुंठे चारा क्षेत्र",
+    spaceRequiredDescEn: "400 sq.ft ventilated shed + 2 gunthas green fodder plot",
+    riskLevel: "Low",
+    subsidySchemeNameMr: "राष्ट्रीय पशुधन अभियान (NLM) व दुग्ध विकास योजना",
+    subsidySchemeNameEn: "National Livestock Mission (NLM) Dairy Subsidy",
+    subsidyPercent: 50,
+    maxSubsidyAmount: 80000,
+    officialSchemePortalUrl: "https://dahd.nic.in",
+    preferredDistricts: [
+      "Ahmednagar",
+      "Pune",
+      "Kolhapur",
+      "Sangli",
+      "Satara",
+      "Solapur",
+      "Nashik",
+      "all",
+    ],
+    marketChannelsMr: [
+      "स्थानिक सहकारी दूध डेअरी (अमूल, महानंद, गोकुळ, वारणा)",
+      "गावातील ग्राहक व हॉटेल्स (थेट विक्री ₹५०-६०/लिटर)",
+      "सेंद्रिय शेणखत व गोमूत्र विक्री",
+    ],
+    marketChannelsEn: [
+      "Local dairy cooperatives (Amul, Gokul, Mahanand)",
+      "Direct household / local tea stall retail",
+      "Organic farm-yard manure (FYM) sale",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "२ दुभत्या गायी (१२-१५ लिटर क्षमता)", nameEn: "2 lactating cows", cost: 130000 },
+      { nameMr: "हवेशीर पत्र्याचा गोठा व गव्हाणी", nameEn: "Shed construction & feeding trough", cost: 20000 },
+      { nameMr: "दूध कॅन व प्राथमिक उपकरणे", nameEn: "Milk cans & stainless utensils", cost: 5000 },
+      { nameMr: "प्राथमिक औषधोपचार व विमा", nameEn: "Initial deworming & animal insurance", cost: 5000 },
+    ],
+    synergies: [
+      {
+        source: "गोमूत्र व शेण (Cow dung & urine)",
+        benefitMr: "दररोज ३०-४० किलो शेण उपलब्ध; जीवामृत व गांडूळ खत बनवून पिकांवरील रासायनिक खतांचा खर्च ५०% वाचतो.",
+        benefitEn: "30-40 kg fresh dung daily; produces Jeevamrut reducing crop chemical fertilizer bills.",
+        savingsEstimatedPerYear: 22000,
+      },
+      {
+        source: "पिकांचे अवशेष (Crop residue)",
+        benefitMr: "सोयाबीन भुसा, बाजरीचे कडबा व मक्याची ताटे जनावरांचा मुख्य सुका चारा म्हणून वापरता येतात.",
+        benefitEn: "Soybean straw, bajra kadba, and maize stover utilized directly as dry fodder.",
+        savingsEstimatedPerYear: 18000,
+      },
+    ],
+    setupStepsMr: [
+      "हवेशीर व पाण्याचा निचरा होणाऱ्या जागेवर पूर्व-पश्चिम गोठा बांधा.",
+      "स्थानिक पशुवैद्यकीय अधिकाऱ्यांच्या सल्ल्याने दुसऱ्या/तिसऱ्या वेतातील निरोगी गायी खरेदी करा.",
+      "जनावरांचा विमा उतरवून घ्या आणि लाळ-खुरकूत (FMD) लसीकरण पूर्ण करा.",
+      "जवळच्या दूध डेअरीत उत्पादक खाते सुरू करा (दर १० दिवसांनी बँक खात्यात थेट पेमेंट).",
+    ],
+    setupStepsEn: [
+      "Construct a ventilated east-west shed with adequate drainage.",
+      "Purchase healthy 2nd/3rd lactation cows verified by a veterinary officer.",
+      "Insure cattle and administer FMD/HS vaccinations.",
+      "Register with the nearest dairy cooperative for 10-day payment cycles.",
+    ],
+    descriptionMr: "दर १० दिवसांनी खात्रीशीर रोख उत्पन्न मिळवून देणारा अत्यंत सुरक्षित शेतीपूरक व्यवसाय. पिकांच्या दुष्काळात कुटुंबाचा घरखर्च चालवण्यासाठी आधार.",
+    descriptionEn: "Highly reliable enterprise providing regular cash flow every 10 days to buffer seasonal crop dry spells.",
+    lastVerifiedDate: "12-Oct-2026",
+  },
+  {
+    id: "goat-farming-osmanabadi",
+    titleEn: "Goat Farming Unit (10 Does + 1 Buck - Osmanabadi)",
+    titleMr: "शेळीपालन व्यवसाय (१० शेळ्या + १ बोकड - उस्मानाबादी जात)",
+    titleHi: "बकरी पालन (१० बकरियां + १ बकरा)",
+    category: "Livestock",
+    categoryLabelMr: "शेळी व मेंढीपालन",
+    categoryLabelEn: "Goat Farming",
+    setupCost: 90000,
+    monthlyOperatingCost: 3500,
+    monthlyGrossRevenue: 13300,
+    expectedMonthlyProfit: 9800,
+    annualProfit: 117600,
+    paybackPeriodMonths: 10,
+    roiPercent: 130.6,
+    gestationPeriodDays: 180,
+    dailyLabourHours: 1.5,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 60,
+    spaceRequiredDescMr: "२५० चौ. फूट बंदिस्त/अर्ध-बंदिस्त शेड",
+    spaceRequiredDescEn: "250 sq.ft semi-intensive ventilated shed",
+    riskLevel: "Low",
+    subsidySchemeNameMr: "राष्ट्रीय पशुधन अभियान (NLM) व डॉ. बाबासाहेब आंबेडकर योजना",
+    subsidySchemeNameEn: "National Livestock Mission 50% Goat Subsidy",
+    subsidyPercent: 50,
+    maxSubsidyAmount: 45000,
+    officialSchemePortalUrl: "https://nlm.udyamimitra.in",
+    preferredDistricts: [
+      "Solapur",
+      "Osmanabad",
+      "Beed",
+      "Latur",
+      "Ahmednagar",
+      "Jalna",
+      "Dhule",
+      "all",
+    ],
+    marketChannelsMr: [
+      "स्थानिक आठवडे बाजार (बोकड विक्री ₹८,००० ते ₹१२,००० प्रति नग)",
+      "ईद व सणांसाठी थेट ग्राहक विक्री (₹४००-५०० प्रति किलो जिवंत वजन)",
+      "लेंड्या खत विक्री (द्राक्ष व डाळिंब बागायतदारांना ₹५,०००/ट्रॉली)",
+    ],
+    marketChannelsEn: [
+      "Weekly livestock mandis (bucks sold @ ₹8,000 - ₹12,000 each)",
+      "Festival retail directly to consumers",
+      "Goat pellet manure sold to grape and pomegranate orchardists",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "१० उस्मानाबादी शेळ्या (वय १ वर्ष)", nameEn: "10 Osmanabadi female does", cost: 65000 },
+      { nameMr: "१ जातिवंत उस्मानाबादी पैदाशीचा बोकड", nameEn: "1 purebred breeding buck", cost: 10000 },
+      { nameMr: "बांबू व जाळीचे बंदिस्त शेड", nameEn: "Elevated shed with wire fencing", cost: 11000 },
+      { nameMr: "लसीकरण (ET, PPR) व प्राथमिक औषधे", nameEn: "PPR / Enterotoxemia vaccination", cost: 4000 },
+    ],
+    synergies: [
+      {
+        source: "लेंड्या खत (Goat Manure)",
+        benefitMr: "लेंड्या खतामध्ये नत्राचे प्रमाण गाईच्या शेणापेक्षा तिप्पट असते; फळबागांसाठी उत्कृष्ट सेंद्रिय खत.",
+        benefitEn: "Goat pellet manure has 3x nitrogen of cow dung, perfect for vineyards.",
+        savingsEstimatedPerYear: 15000,
+      },
+      {
+        source: "बांधावरील गवत व सुबाभूळ",
+        benefitMr: "शेताच्या बांधावरील बाभळी, सुबाभूळ व तण खाऊन शेळ्या जगतात, बाहेरील चाऱ्याचा खर्च अत्यंत कमी.",
+        benefitEn: "Goats browse on farm bund Subabul, acacia, and field weeds requiring minimal purchased feed.",
+        savingsEstimatedPerYear: 12000,
+      },
+    ],
+    setupStepsMr: [
+      "कोरडी व हवेशीर जागा निवडून लाकडी किंवा बांबूचे शेड तयार करा.",
+      "उस्मानाबादी किंवा संगमनेरी जातीच्या जुळे पिले देणाऱ्या निरोगी शेळ्यांची निवड करा.",
+      "शेळ्यांना जंतनाशक पाजून पीपीआर (PPR) आणि आंत्रविषार (ET) लस द्या.",
+      "वर्षातून दोनदा वेत मिळून ६-८ महिन्यांत पैदास विक्रीयोग्य होते.",
+    ],
+    setupStepsEn: [
+      "Erect an airy dry shed with slotted elevated flooring.",
+      "Procure high-twinning Osmanabadi or Sangamneri breeds.",
+      "Administer PPR and Enterotoxemia vaccinations.",
+      "Breed twice a year; sell kids at 6-8 months age.",
+    ],
+    descriptionMr: "अत्यल्प पाणी व कमी जागेत मराठवाडा आणि दुष्काळी भागातील शेतकऱ्यांसाठी 'फिरते एटीएम' मानला जाणारा अत्यंत फायदेशीर व्यवसाय.",
+    descriptionEn: "Known as the poor man's ATM, requires minimal water and space, thriving in dry zones.",
+    lastVerifiedDate: "10-Oct-2026",
+  },
+  {
+    id: "backyard-poultry-desi",
+    titleEn: "Free-Range Desi Poultry (50 Birds - Kadaknath / Kaveri)",
+    titleMr: "गावरान व कडकनाथ कुक्कुटपालन (५० पक्षी युनिट)",
+    titleHi: "देसी मुर्गी पालन (५० पक्षी)",
+    category: "Poultry",
+    categoryLabelMr: "कुक्कुटपालन (पोल्ट्री)",
+    categoryLabelEn: "Desi Poultry",
+    setupCost: 35000,
+    monthlyOperatingCost: 2200,
+    monthlyGrossRevenue: 7800,
+    expectedMonthlyProfit: 5600,
+    annualProfit: 67200,
+    paybackPeriodMonths: 6,
+    roiPercent: 192.0,
+    gestationPeriodDays: 45,
+    dailyLabourHours: 1.0,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 25,
+    spaceRequiredDescMr: "१५० चौ. फूट शेड + मोकळे परसातील क्षेत्र",
+    spaceRequiredDescEn: "150 sq.ft night shelter + free range yard",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "ग्रामीण परसातील कुक्कुटपालन अनुदान योजना",
+    subsidySchemeNameEn: "Rural Backyard Poultry Development Scheme",
+    subsidyPercent: 50,
+    maxSubsidyAmount: 17500,
+    officialSchemePortalUrl: "https://ahd.maharashtra.gov.in",
+    preferredDistricts: ["all"],
+    marketChannelsMr: [
+      "गावरान अंडी थेट विक्री (₹१२ ते ₹१५ प्रति नग)",
+      "जिवंत पक्षी विक्री (₹४०० ते ₹६०० प्रति किलो)",
+      "स्थानिक ढाबे व घरगुती ग्राहक",
+    ],
+    marketChannelsEn: [
+      "Free-range brown eggs direct retail (₹12-15 per egg)",
+      "Live birds sold @ ₹400-600/kg",
+      "Local highway dhabas & direct consumers",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "५० एकदिवसीय गावरान/कावेरी पिले", nameEn: "50 day-old chicks (Kaveri/Kadaknath)", cost: 5000 },
+      { nameMr: "रात्रीचे बंदिस्त शेड व जाळी कुंपण", nameEn: "Night shelter & predator-proof wire mesh", cost: 18000 },
+      { nameMr: "पिण्याचे पाणी व खाद्य भांडी (Feeders/Drinkers)", nameEn: "Automatic drinkers & feeders", cost: 3500 },
+      { nameMr: "लसीकरण (लासोटा, गंबोरो) व स्टार्टर खाद्य", nameEn: "Lasota/Ranikhet vaccines & starter feed", cost: 8500 },
+    ],
+    synergies: [
+      {
+        source: "कीड नियंत्रण (Natural Pest Control)",
+        benefitMr: "पक्षी शेतातील लष्करी अळी, खोडकीड व किडे वेचून खातात; फळबागेतील कीटकनाशक फवारणीचा खर्च वाचतो.",
+        benefitEn: "Free-range birds eat caterpillars, grasshoppers, and beetles reducing pesticide sprays.",
+        savingsEstimatedPerYear: 9000,
+      },
+      {
+        source: "परसातील टाकाऊ अन्न व धान्य",
+        benefitMr: "घरातील खरकट, किडके धान्य व भाजीपाल्याचे अवशेष खाऊन पक्षी जगतात.",
+        benefitEn: "Feed costs reduced by foraging kitchen scraps, broken grain, and weed seeds.",
+        savingsEstimatedPerYear: 6500,
+      },
+    ],
+    setupStepsMr: [
+      "कुत्रे व मुंगूस यांपासून संरक्षणासाठी मजबूत जाळीचे शेड उभारा.",
+      "शासकीय हॅचरीमधून निरोगी कावेरी, सातपुडा किंवा कडकनाथ पिले आणा.",
+      "पहिल्या आठवड्यात लासोटा (Lasota) व गंबोरो लसीकरण काटेकोरपणे करा.",
+      "दिवसा शेतात मोकळे चरू द्या, रात्री शेडमध्ये बंद करा.",
+    ],
+    setupStepsEn: [
+      "Build predator-proof wire enclosure for night safety.",
+      "Procure vaccinated Kaveri or Kadaknath chicks from certified hatcheries.",
+      "Follow strict Ranikhet/Lasota vaccination calendar.",
+      "Free-range during daylight; shelter at night.",
+    ],
+    descriptionMr: "अत्यल्प भांडवलात महिला व युवकांसाठी दररोज ताज्या गावरान अंड्यांतून तत्काळ रोख रक्कम देणारा सोपा व्यवसाय.",
+    descriptionEn: "Low initial capital enterprise offering quick daily returns through premium free-range eggs.",
+    lastVerifiedDate: "05-Oct-2026",
+  },
+  {
+    id: "farm-pond-fisheries",
+    titleEn: "Farm Pond Fish Culture (Rohu, Catla, Grass Carp)",
+    titleMr: "शेततळे मत्स्यपालन (रोहू, कटला व ग्रास कार्प)",
+    titleHi: "खेत तालाब मछली पालन",
+    category: "Fisheries",
+    categoryLabelMr: "मत्स्यपालन (अक्वाकल्चर)",
+    categoryLabelEn: "Farm Pond Fisheries",
+    setupCost: 45000,
+    monthlyOperatingCost: 3000,
+    monthlyGrossRevenue: 15500,
+    expectedMonthlyProfit: 12500,
+    annualProfit: 150000,
+    paybackPeriodMonths: 8,
+    roiPercent: 333.3,
+    gestationPeriodDays: 210,
+    dailyLabourHours: 0.5,
+    waterNeed: "Zero",
+    waterReqLitresPerDay: 0, // Uses existing pond water without extra draw
+    spaceRequiredDescMr: "उपलब्ध शेततळे (३०×३० मीटर किंवा मोठे)",
+    spaceRequiredDescEn: "Existing farm pond (30x30m or larger)",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "प्रधानमंत्री मत्स्य संपदा योजना (PMMSY)",
+    subsidySchemeNameEn: "PM Matsya Sampada Yojana (PMMSY 40-60% Subsidy)",
+    subsidyPercent: 60,
+    maxSubsidyAmount: 27000,
+    officialSchemePortalUrl: "https://pmmsy.dof.gov.in",
+    preferredDistricts: [
+      "Nashik",
+      "Solapur",
+      "Ahmednagar",
+      "Jalgaon",
+      "Amravati",
+      "Nanded",
+      "all",
+    ],
+    marketChannelsMr: [
+      "स्थानिक मासे बाजार व आठवडे बाजार (₹१५० ते ₹१८० प्रति किलो)",
+      "शेततळ्यावर थेट ग्राहक विक्री (ताजे मासे)",
+      "शहरी हॉटेल व व्यापारी खरेदी",
+    ],
+    marketChannelsEn: [
+      "Local wet fish markets (₹150-180 per kg)",
+      "Direct farm-gate retail to visiting consumers",
+      "Local restaurants and wholesale merchants",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "१,००० मिश्र कार्प मत्स्यबीज (फिंगरलिंग्ज)", nameEn: "1,000 mixed carp fingerlings", cost: 10000 },
+      { nameMr: "तळे सुरक्षा जाळी व पक्षी प्रतिबंधक नेट", nameEn: "Predator/bird safety net", cost: 12000 },
+      { nameMr: "पूरक फ्लोटिंग मत्स्य खाद्य (Floating Pellets)", nameEn: "Commercial floating fish pellets", cost: 15000 },
+      { nameMr: "चुना, शेणखत व पाणी तपासणी किट", nameEn: "Liming, organic manure & test kit", cost: 8000 },
+    ],
+    synergies: [
+      {
+        source: "मत्स्ययुक्त पोषक पाणी (Nutrient-Rich Irrigation Water)",
+        benefitMr: "माशांच्या विष्ठेमुळे शेततळ्याच्या पाण्यात विरघळलेला नायट्रोजन व स्फुरद जमा होतो; हे पाणी ठिबकने पिकांना दिल्यास पिकांची वाढ जोमदार होते.",
+        benefitEn: "Fish excretion enriches pond water with dissolved nitrogen and potassium, acting as liquid fertigation.",
+        savingsEstimatedPerYear: 25000,
+      },
+      {
+        source: "शेततळ्यातील शेवाळ नियंत्रण",
+        benefitMr: "ग्रास कार्प मासे तळ्यातील शेवाळ व गवत खाऊन स्वच्छ ठेवतात; ठिबक फिल्टर चोकअप होण्याचे प्रमाण घटते.",
+        benefitEn: "Grass carp feed on algae and pond weeds, keeping irrigation pump filters clean.",
+        savingsEstimatedPerYear: 8000,
+      },
+    ],
+    setupStepsMr: [
+      "शेततळ्यातील पाणी स्वच्छ करून प्रति एकर २०० किलो चुना टाकून पाणी निर्जंतुक करा.",
+      "शासकीय मत्स्यबीज केंद्रातून निरोगी ३-४ इंच लांबीचे फिंगरलिंग्ज आणा.",
+      "रोहू (४०%), कटला (३०%) आणि ग्रास कार्प (३०%) या प्रमाणात बीज सोडा.",
+      "दररोज सकाळी व संध्याकाळी शरीराच्या २-३% वजनाने फ्लोटिंग खाद्य द्या.",
+      "७ ते ८ महिन्यांत माशांचे वजन १ किलो झाल्यावर जाळे टाकून काढणी करा.",
+    ],
+    setupStepsEn: [
+      "Disinfect pond water by applying 200 kg lime per acre.",
+      "Stock 3-4 inch fingerlings in ratio 40% Rohu, 30% Catla, 30% Grass Carp.",
+      "Feed floating pellets at 2-3% of total body weight daily.",
+      "Harvest after 7-8 months when individual weight reaches 1 kg.",
+    ],
+    descriptionMr: "सिंचनासाठी आधीच बांधलेल्या शेततळ्याचा दुहेरी उपयोग करून शून्य अतिरिक्त जागेत वर्षाला ₹१ लाखापेक्षा जास्त अतिरिक्त नफा मिळवणारा व्यवसाय.",
+    descriptionEn: "Monetizes existing irrigation farm ponds with zero additional land, turning stagnant water into liquid profit.",
+    lastVerifiedDate: "08-Oct-2026",
+  },
+  {
+    id: "vermicompost-unit",
+    titleEn: "Commercial Vermicompost Bed (30ft x 8ft x 2.5ft)",
+    titleMr: "व्यावसायिक गांडूळ खत व व्हर्मीवॉश निर्मिती",
+    titleHi: "केंचुआ खाद (वर्मीकम्पोस्ट) इकाई",
+    category: "Organic_Inputs",
+    categoryLabelMr: "सेंद्रिय निविष्ठा उत्पादन",
+    categoryLabelEn: "Organic Inputs",
+    setupCost: 28000,
+    monthlyOperatingCost: 1500,
+    monthlyGrossRevenue: 9000,
+    expectedMonthlyProfit: 7500,
+    annualProfit: 90000,
+    paybackPeriodMonths: 4,
+    roiPercent: 321.4,
+    gestationPeriodDays: 60,
+    dailyLabourHours: 0.5,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 40,
+    spaceRequiredDescMr: "३०×१० फूट सावलीची जागा",
+    spaceRequiredDescEn: "30x10 ft shaded area under tree or shed net",
+    riskLevel: "Low",
+    subsidySchemeNameMr: "परंपरागत कृषी विकास योजना (PKVY) व डॉ. पंजाबराव देशमुख सेंद्रिय शेती",
+    subsidySchemeNameEn: "Paramparagat Krishi Vikas Yojana (PKVY)",
+    subsidyPercent: 50,
+    maxSubsidyAmount: 14000,
+    officialSchemePortalUrl: "https://pgsindia-ncof.gov.in",
+    preferredDistricts: ["all"],
+    marketChannelsMr: [
+      "परिसरातील द्राक्ष, डाळिंब व भाजीपाला उत्पादक शेतकरी (₹६ ते ₹८ प्रति किलो)",
+      "शहरी रोपवाटिका (Nursery) व टेरेस गार्डन ग्राहक (₹१५-२० प्रति किलो पॅक)",
+      "व्हर्मीवॉश लिक्विड विक्री (₹५० प्रति लिटर)",
+    ],
+    marketChannelsEn: [
+      "Local fruit orchardists & vegetable growers (₹6-8 per kg in bulk)",
+      "Urban nurseries & terrace garden retail (₹15-20 per kg packed)",
+      "Liquid Vermiwash tonic (₹50 per litre)",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "आयसेनिया फेटिडा गांडूळ कल्चर (५ किलो)", nameEn: "Eisenia fetida earthworm culture (5 kg)", cost: 5000 },
+      { nameMr: "एचडीपीई व्हर्मीबेड किंवा विटांचे बेड बांधकाम", nameEn: "UV-stabilized HDPE vermi-bed (30x8 ft)", cost: 9000 },
+      { nameMr: "शेडनेट आच्छादन व स्प्रिंकलर स्प्रिंकल पाईप", nameEn: "Shade net covering & micro-sprinklers", cost: 7000 },
+      { nameMr: "चाळणी, पॅकिंग पिशव्या व सीलर", nameEn: "Screening sieve, bags & sealing machine", cost: 7000 },
+    ],
+    synergies: [
+      {
+        source: "शेतातील सेंद्रिय कचरा विघटन",
+        benefitMr: "सोयाबीन भुसा, उसाचे पाचट व झाडांचा पालापाचोळा सडवून उत्कृष्ट सेंद्रिय खतात रूपांतर होते.",
+        benefitEn: "Converts farm crop residues and sugarcane trash into nutrient-dense humus.",
+        savingsEstimatedPerYear: 30000,
+      },
+      {
+        source: "स्वतःच्या पिकांसाठी मोफत खत",
+        benefitMr: "बाहेरून रासायनिक डीएपी किंवा युरिया विकत घेण्याची गरज उरत नाही; जमिनीची सुपीकता व ओलावा धरून ठेवण्याची क्षमता वाढते.",
+        benefitEn: "Eliminates purchase of chemical fertilizers for own farm plots while improving soil carbon.",
+        savingsEstimatedPerYear: 28000,
+      },
+    ],
+    setupStepsMr: [
+      "झाडाच्या सावलीत किंवा शेडनेटखाली ३० फूट लांब व ८ फूट रुंद बेड तयार करा.",
+      "तळाशी उसाचे पाचट, काडीकचऱ्याचा ६ इंची थर द्या आणि त्यावर अर्धवट कुजलेले शेण पसरा.",
+      "बेडवर 'आयसेनिया फेटिडा' (Eisenia fetida) प्रजातीचे गांडूळ सोडा.",
+      "दररोज हलके पाणी शिंपडून ४०-५०% ओलावा राखा.",
+      "६० दिवसांत चहाच्या भुकटीसारखे दाणेदार गांडूळ खत तयार होते; चाळून पोत्यात भरा.",
+    ],
+    setupStepsEn: [
+      "Prepare a 30x8 ft bed under shade net with proper slope for drainage.",
+      "Layer dry biomass at bottom, followed by partially decomposed cattle manure.",
+      "Inoculate with Eisenia fetida earthworms.",
+      "Sprinkle water daily to maintain 40-50% moisture level.",
+      "Harvest granular vermicompost after 60 days, sieve, and bag.",
+    ],
+    descriptionMr: "केवळ २ महिन्यांत भांडवल वसूल करणारा पर्यावरणपूरक उद्योग. स्वतःच्या शेताची सुपीकता वाढवून शेजाऱ्यांना खत विकून हमखास नफा.",
+    descriptionEn: "Fastest payback organic enterprise that converts farm biomass into premium organic fertilizer.",
+    lastVerifiedDate: "02-Oct-2026",
+  },
+  {
+    id: "apiculture-beekeeping",
+    titleEn: "Apiculture / Honeybee Keeping (10 Bee Boxes)",
+    titleMr: "मधमाशी पालन व्यवसाय (१० मधमाश्यांच्या पेट्या)",
+    titleHi: "मधुमक्खी पालन (१० बॉक्स)",
+    category: "Apiary",
+    categoryLabelMr: "मधमाशी पालन (एपिकल्चर)",
+    categoryLabelEn: "Apiculture",
+    setupCost: 45000,
+    monthlyOperatingCost: 1000,
+    monthlyGrossRevenue: 7500,
+    expectedMonthlyProfit: 6500,
+    annualProfit: 78000,
+    paybackPeriodMonths: 7,
+    roiPercent: 173.3,
+    gestationPeriodDays: 45,
+    dailyLabourHours: 0.5,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 10,
+    spaceRequiredDescMr: "फळबागेत किंवा शेताच्या बांधावर १० पेट्या ठेवण्याइतकी जागा",
+    spaceRequiredDescEn: "Under orchard trees or field borders",
+    riskLevel: "Low",
+    subsidySchemeNameMr: "राष्ट्रीय मधमाशी पालन व मध अभियान (NBHM)",
+    subsidySchemeNameEn: "National Beekeeping & Honey Mission (NBHM 80% Subsidy)",
+    subsidyPercent: 80,
+    maxSubsidyAmount: 36000,
+    officialSchemePortalUrl: "https://nbhm.gov.in",
+    preferredDistricts: [
+      "Nashik",
+      "Pune",
+      "Satara",
+      "Kolhapur",
+      "Nagpur",
+      "Amravati",
+      "all",
+    ],
+    marketChannelsMr: [
+      "शुद्ध कच्चा मध थेट ग्राहकांना (₹५०० ते ₹७०० प्रति किलो)",
+      "आयुर्वेदिक औषध उत्पादक व स्थानिक फार्मर्स मार्केट",
+      "मधमाशी मेण (Beeswax) सौंदर्य प्रसाधनांसाठी विक्री (₹६००/किलो)",
+    ],
+    marketChannelsEn: [
+      "Direct retail of pure raw unpasteurized honey (₹500-700 per kg)",
+      "Ayurvedic pharmacy manufacturers",
+      "Beeswax sold for natural cosmetics (₹600/kg)",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "१० लाकडी मध पेट्या (ISI Standard Bee Boxes)", nameEn: "10 standard wooden bee hives", cost: 22000 },
+      { nameMr: "१० मधमाशी कॉलनी (Apis cerana indica)", nameEn: "10 healthy honeybee colonies", cost: 15000 },
+      { nameMr: "मध निष्कासन यंत्र (Stainless Honey Extractor)", nameEn: "Stainless steel honey extractor centrifuge", cost: 5000 },
+      { nameMr: "संरक्षक जाळी, हातमोजे व स्मोकर किट", nameEn: "Bee veil, protective gloves, and smoker", cost: 3000 },
+    ],
+    synergies: [
+      {
+        source: "परागीभवन व पीक उत्पादनात वाढ (Cross-Pollination)",
+        benefitMr: "मधमाश्यांमुळे मोहरी, कांदा बीजोत्पादन, सूर्यफूल व डाळिंब या पिकांचे उत्पादन २५% ते ३५% वाढते!",
+        benefitEn: "Bee pollination boosts fruit and seed set in mustard, onion, and pomegranate by 25-35%.",
+        savingsEstimatedPerYear: 35000,
+      },
+    ],
+    setupStepsMr: [
+      "फळबाग किंवा फुल पिकांच्या जवळ सावलीत मधपेट्या ठेवा.",
+      "मुंग्यांपासून संरक्षणासाठी स्टँडच्या पायाखाली पाण्याच्या वाट्या ठेवा.",
+      "आठवड्यातून एकदा पेटी तपासून राणी माशीची कार्यक्षमता खात्री करा.",
+      "फुलझाडांच्या हंगामात मध तयार झाल्यावर सेंट्रीफ्यूगल यंत्राने मध काढा; कॉलनी सुरक्षित राहते.",
+    ],
+    setupStepsEn: [
+      "Place hives in shaded spots near flowering crops or orchards.",
+      "Place water cups under hive stands to prevent ant attacks.",
+      "Perform weekly inspections to verify queen health and brood development.",
+      "Extract honey using centrifugal extractor without harming the brood.",
+    ],
+    descriptionMr: "अतिशय कमी श्रमात शुद्ध मधाचे उत्पन्न आणि पिकांचे उत्पादन ३०% वाढवणारा निसर्गाशी सुसंगत सर्वोत्तम शेतीपूरक व्यवसाय.",
+    descriptionEn: "Low-effort allied enterprise that yields pure honey while boosting main crop yields by up to 35% through pollination.",
+    lastVerifiedDate: "07-Oct-2026",
+  },
+  {
+    id: "mushroom-oyster-cultivation",
+    titleEn: "Oyster Mushroom Cultivation (Thatched / Poly Shed)",
+    titleMr: "धिंगरी / ऑयस्टर अळंबी (मशरूम) उत्पादन",
+    titleHi: "ढींगरी मशरूम उत्पादन",
+    category: "Horticulture",
+    categoryLabelMr: "अळंबी (मशरूम) उत्पादन",
+    categoryLabelEn: "Mushroom Cultivation",
+    setupCost: 32000,
+    monthlyOperatingCost: 3500,
+    monthlyGrossRevenue: 14500,
+    expectedMonthlyProfit: 11000,
+    annualProfit: 132000,
+    paybackPeriodMonths: 3,
+    roiPercent: 412.5,
+    gestationPeriodDays: 25,
+    dailyLabourHours: 1.5,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 50,
+    spaceRequiredDescMr: "२०० चौ. फूट अंधारी व दमट खोली किंवा शेड",
+    spaceRequiredDescEn: "200 sq.ft shaded dark humid room or thatched hut",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "राष्ट्रीय फलोत्पादन अभियान (MIDH) अळंबी अनुदान",
+    subsidySchemeNameEn: "Mission for Integrated Development of Horticulture (MIDH)",
+    subsidyPercent: 40,
+    maxSubsidyAmount: 12800,
+    officialSchemePortalUrl: "https://midh.gov.in",
+    preferredDistricts: ["all"],
+    marketChannelsMr: [
+      "शहरी भाजीपाला मार्केट व सुपरमार्केट्स (₹१६० ते ₹२०० प्रति किलो ताजी अळंबी)",
+      "हॉटेल्स, रेस्टॉरंट्स व चायनीज कॉर्नर्स",
+      "वाळवलेली अळंबी व पावडर (₹८०० ते ₹१,००० प्रति किलो)",
+    ],
+    marketChannelsEn: [
+      "Fresh retail in urban markets & grocery stores (₹160-200/kg)",
+      "Direct supply to restaurants and catering businesses",
+      "Sun-dried mushrooms and high-protein powder (₹800-1000/kg)",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "बांबूचे रॅक व खोली तयारी", nameEn: "Bamboo vertical racks & room preparation", cost: 12000 },
+      { nameMr: "स्पॉन (मशरूम बियाणे) व पीपी बॅग्ज", nameEn: "Spawn master culture & PP hanging bags", cost: 6000 },
+      { nameMr: "काड निर्जंतुकीकरण ड्रम व हिटर", nameEn: "Straw boiling drum & heating unit", cost: 8000 },
+      { nameMr: "ह्युमिडिफायर / मिस्टिंग स्प्रेअर", nameEn: "Misting fogger & hygrometer sensor", cost: 6000 },
+    ],
+    synergies: [
+      {
+        source: "गहू व सोयाबीन काडाचा फेरवापर",
+        benefitMr: "शेतात जाळून वाया जाणारे गव्हाचे किंवा सोयाबीनचे काड मशरूम वाढवण्यासाठी मुख्य माध्यम म्हणून वापरले जाते.",
+        benefitEn: "Utilizes crop residue (wheat straw/soybean husk) avoiding burning in fields.",
+        savingsEstimatedPerYear: 8000,
+      },
+      {
+        source: "वापरलेले मशरूम काड (Spent Mushroom Substrate - SMS)",
+        benefitMr: "मशरूम काढून झाल्यावर उरलेले काड पिकांसाठी अत्यंत समृद्ध सेंद्रिय खत व गांडूळ खाद्य बनते.",
+        benefitEn: "Spent mushroom substrate acts as premium organic compost for fruit trees.",
+        savingsEstimatedPerYear: 12000,
+      },
+    ],
+    setupStepsMr: [
+      "सोयाबीन किंवा गव्हाचे काड बारीक तुकडे करून उकळत्या पाण्यात निर्जंतुक करा.",
+      "काड सुकवून त्यात ६०% ओलावा राखा आणि थराथरांमध्ये स्पॉन (बुरशी बियाणे) भरा.",
+      "बॅग्ज टांगून १५-१८ दिवस अंधाऱ्या खोलीत ठेवा (मायसेलियम वाढ).",
+      "बॅग पांढरी झाल्यावर लहान छिद्रे पाडा आणि दिवसातून २-३ वेळा पाण्याची हलकी फवारणी करा.",
+      "२२ ते २५ दिवसांत ताजी अळंबी काढणीस तयार होते; ३ तोडे मिळतात.",
+    ],
+    setupStepsEn: [
+      "Chop wheat/soybean straw into 2-inch bits and boil to pasteurize.",
+      "Drain excess water to 60% moisture; layer with spawn inside PP bags.",
+      "Hang bags in a dark spawn-run room for 15-18 days.",
+      "Once fully colonized, introduce diffused light and mist with water.",
+      "Harvest fresh mushrooms in 3 flushes starting day 22-25.",
+    ],
+    descriptionMr: "केवळ २५ दिवसांत पहिले उत्पन्न देणारा अतिशय वेगवान व्यवसाय. महिला बचत गटांसाठी व शेतकरी कुटुंबासाठी घरबसल्या नफ्याचे साधन.",
+    descriptionEn: "Fastest-yielding enterprise with first harvest in just 25 days, creating substantial income from small shaded spaces.",
+    lastVerifiedDate: "06-Oct-2026",
+  },
+  {
+    id: "custom-hiring-center",
+    titleEn: "Custom Hiring Center (Mini Tractor / Rotavator & Sprayer)",
+    titleMr: "शेती अवजारे भाडेतत्त्व केंद्र (मिनी ट्रॅक्टर, रोटाव्हेटर व ट्रॅक्टर फवारणी यंत्र)",
+    titleHi: "कस्टम हायरिंग सेंटर (कृषि यंत्र किराया)",
+    category: "Mechanization",
+    categoryLabelMr: "शेती यांत्रिकीकरण व अवजारे भाडे",
+    categoryLabelEn: "Custom Hiring Center",
+    setupCost: 280000,
+    monthlyOperatingCost: 8000,
+    monthlyGrossRevenue: 30000,
+    expectedMonthlyProfit: 22000,
+    annualProfit: 264000,
+    paybackPeriodMonths: 13,
+    roiPercent: 94.3,
+    gestationPeriodDays: 1,
+    dailyLabourHours: 3.0,
+    waterNeed: "Zero",
+    waterReqLitresPerDay: 0,
+    spaceRequiredDescMr: "ट्रॅक्टर व अवजारे ठेवण्यासाठी छोटी शेड",
+    spaceRequiredDescEn: "Parking shed for tractor and implements",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "कृषी यांत्रिकीकरण उप-अभियान (SMAM) ४०-५०% अनुदान",
+    subsidySchemeNameEn: "Sub-Mission on Agricultural Mechanization (SMAM)",
+    subsidyPercent: 40,
+    maxSubsidyAmount: 112000,
+    officialSchemePortalUrl: "https://agrimachinery.nic.in",
+    preferredDistricts: ["all"],
+    marketChannelsMr: [
+      "गावातील लहान व अत्यल्प भूधारक शेतकरी ज्यांच्याकडे ट्रॅक्टर नाही",
+      "द्राक्ष व डाळिंब बागांमध्ये फवारणी सेवा (₹१,२०० प्रति एकर)",
+      "नांगरणी, रोटाव्हेटर व पेरणी भाडेतत्त्वावर (₹८०० ते ₹१,००० प्रति तास)",
+    ],
+    marketChannelsEn: [
+      "Smallholder neighbors lacking capital for heavy machinery",
+      "Orchard precision spraying contracts (₹1,200/acre)",
+      "Rotavator and tillage service (₹800-1,000/hour)",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "मिनी ट्रॅक्टर किंवा पॉवर टिलर (१८-२४ HP)", nameEn: "Mini tractor / Power tiller (18-24 HP)", cost: 200000 },
+      { nameMr: "रोटाव्हेटर व नांगर अवजार", nameEn: "Rotavator & reversible plough attachment", cost: 50000 },
+      { nameMr: "५०० लिटर हाय-प्रेशर ट्रॅक्टर फवारणी पंप", nameEn: "500-litre HTP tractor-mounted boom sprayer", cost: 30000 },
+    ],
+    synergies: [
+      {
+        source: "स्वतःच्या शेतीकामांची मोफत व वेळेवर पूर्तता",
+        benefitMr: "स्वतःच्या शेतीची नांगरणी, खुरपणी व फवारणी मजुरांशिवाय योग्य वेळी होते; बाहेरील भाड्याचे पैसे वाचतात.",
+        benefitEn: "Mechanizes own farm at zero rental cost, avoiding seasonal labour shortages during critical spray windows.",
+        savingsEstimatedPerYear: 32000,
+      },
+    ],
+    setupStepsMr: [
+      "MahaDBT कृषी यांत्रिकीकरण पोर्टलवर लॉटरीसाठी अर्ज करा.",
+      "अनुदान मंजुरीनंतर अधिकृत विक्रेत्याकडून यंत्रसामग्री खरेदी करा.",
+      "गावात व्हॉट्सॲप ग्रुपद्वारे किंवा ग्रामपंचायतीत भाडेदर फलक लावा.",
+      "हंगामात वेळेचे नियोजन करून रोखीने भाडेतत्त्वावर सेवा द्या.",
+    ],
+    setupStepsEn: [
+      "Apply on MahaDBT / SMAM portal for machinery subsidy pre-sanction.",
+      "Procure certified mini tractor with attachments from authorized dealer.",
+      "Promote services locally with transparent hourly/acre rates.",
+      "Manage scheduling to service own plots while monetizing idle hours.",
+    ],
+    descriptionMr: "मजुरांची टंचाई असणाऱ्या भागात स्वतःची कामे पूर्ण करून शेजारच्या शेतकऱ्यांना अवजारे भाड्याने देऊन दरमहा ₹२०,०००+ कमवा.",
+    descriptionEn: "High-earning enterprise that eliminates reliance on scarce farm labour while earning substantial rental income from neighbors.",
+    lastVerifiedDate: "11-Oct-2026",
+  },
+  {
+    id: "mini-dal-mill-processing",
+    titleEn: "Mini Dal Mill & Turmeric Processing Unit",
+    titleMr: "मिनी डाळ मिल व हळद प्रक्रिया उद्योग",
+    titleHi: "मिनी दाल मिल और हल्दी प्रसंस्करण",
+    category: "Agro_Processing",
+    categoryLabelMr: "अन्नप्रक्रिया व मूल्यवर्धन",
+    categoryLabelEn: "Agro-Processing",
+    setupCost: 250000,
+    monthlyOperatingCost: 12000,
+    monthlyGrossRevenue: 40000,
+    expectedMonthlyProfit: 28000,
+    annualProfit: 336000,
+    paybackPeriodMonths: 9,
+    roiPercent: 134.4,
+    gestationPeriodDays: 5,
+    dailyLabourHours: 2.5,
+    waterNeed: "Low",
+    waterReqLitresPerDay: 50,
+    spaceRequiredDescMr: "३०० चौ. फूट बंदिस्त शेड व ३-फेज वीज जोडणी",
+    spaceRequiredDescEn: "300 sq.ft enclosed room with 3-phase power",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "प्रधानमंत्री सूक्ष्म अन्न प्रक्रिया योजना (PMFME) ३५% अनुदान",
+    subsidySchemeNameEn: "PM Formalisation of Micro Food Processing (PMFME 35% Subsidy)",
+    subsidyPercent: 35,
+    maxSubsidyAmount: 87500,
+    officialSchemePortalUrl: "https://pmfme.mofpi.gov.in",
+    preferredDistricts: [
+      "Latur",
+      "Nanded",
+      "Hingoli",
+      "Akola",
+      "Amravati",
+      "Yavatmal",
+      "Solapur",
+      "all",
+    ],
+    marketChannelsMr: [
+      "स्थानिक शेतकऱ्यांच्या तुरीची डाळ करून देणे (मजुरी ₹५ ते ₹७ प्रति किलो)",
+      "स्वतःची 'गावरान पॉलिश नसलेली तूर डाळ' थेट ग्राहकांना (₹१६०-१८०/किलो)",
+      "हळद कांडप करून शुद्ध सेंद्रिय हळद विक्री (₹२५०-३००/किलो)",
+      "डाळीचा भुसा व चुनी जनावरांचा पौष्टिक चारा म्हणून विक्री (₹२५/किलो)",
+    ],
+    marketChannelsEn: [
+      "Custom job-work milling for village farmers (₹5-7/kg processing fee)",
+      "Branded unpolished farm-fresh Tur / Chana dal retail (₹160-180/kg)",
+      "Direct organic turmeric powder sales (₹250-300/kg)",
+      "High-protein dal husk (Chuni) sold as cattle feed (₹25/kg)",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "मिनी डाळ मिल युनिट (१०० किलो/तास क्षमता)", nameEn: "Mini dal mill (100 kg/hr capacity with motor)", cost: 165000 },
+      { nameMr: "हळद पॉलिशर व पल्व्हरायझर मशीन", nameEn: "Turmeric polisher & pulverizer grinder", cost: 55000 },
+      { nameMr: "वजन काटा व नायट्रोजन सीलिंग पॅकिंग मशीन", nameEn: "Digital scale & pouch heat sealer", cost: 20000 },
+      { nameMr: "FSSAI नोंदणी व ब्रँडिंग पाऊच", nameEn: "FSSAI food license & printed pouches", cost: 10000 },
+    ],
+    synergies: [
+      {
+        source: "शेतमालाचे मूल्यवर्धन (Value Addition)",
+        benefitMr: "कच्ची तूर बाजारात ₹७,०००/क्विंटल विकण्याऐवजी डाळ करून विकल्यास ₹१२,०००/क्विंटल उत्पन्न मिळते (७०% जास्त नफा).",
+        benefitEn: "Selling processed unpolished dal yields 70% higher net margin than raw mandi grain sales.",
+        savingsEstimatedPerYear: 50000,
+      },
+      {
+        source: "चुनी व डाळ भुसा (Dal Bran for Dairy)",
+        benefitMr: "डाळ तयार करताना निघणारी चुनी स्वतःच्या दुभत्या गायी-म्हशींना प्रथिनयुक्त आहार म्हणून उपयुक्त ठरते.",
+        benefitEn: "Nutritious dal bran (Chuni) serves as free concentrated cattle feed for dairy animals.",
+        savingsEstimatedPerYear: 18000,
+      },
+    ],
+    setupStepsMr: [
+      "३-फेज वीज जोडणी असलेल्या खोलीत मिलची उभारणी करा.",
+      "PMFME किंवा मुख्यमंत्री अन्नप्रक्रिया योजनेअंतर्गत ३५% अनुदानाचा प्रस्ताव बँकेत सादर करा.",
+      "FSSAI फूड लायसन्स आणि उद्योग आधार (MSME) नोंदणी ऑनलाइन मिळवा.",
+      "परिसरातील शेतकऱ्यांचा शेतमाल प्रक्रिया करून द्या आणि स्वतःचे ब्रँडेड पाऊच विका.",
+    ],
+    setupStepsEn: [
+      "Set up machine unit in ventilated room with 3-phase power connection.",
+      "Apply for 35% capital subsidy under PMFME scheme through bank branch.",
+      "Obtain basic FSSAI license and Udyam MSME registration online.",
+      "Offer toll-milling services to village farmers while retailing farm-packaged dal.",
+    ],
+    descriptionMr: "शेतमालाला थेट व्यापारी न बनवता स्वतः प्रक्रिया उद्योग सुरू करा. कापणीनंतर बाजारात पडणाऱ्या भावाच्या संकटावर सर्वोत्तम कायमस्वरूपी तोडगा.",
+    descriptionEn: "Transforms a primary producer into a micro-agribusiness food processor, bypassing mandi middlemen completely.",
+    lastVerifiedDate: "14-Oct-2026",
+  },
+  {
+    id: "high-density-nursery",
+    titleEn: "High-Density Seedling Nursery (Vegetable & Fruit Saplings)",
+    titleMr: "भाजीपाला व फळझाडे रोपवाटिका (नर्सरी व्यवसाय)",
+    titleHi: "सब्जी एवं फल पौधशाला (नर्सरी)",
+    category: "Nursery",
+    categoryLabelMr: "रोपवाटिका व नर्सरी",
+    categoryLabelEn: "Seedling Nursery",
+    setupCost: 110000,
+    monthlyOperatingCost: 6500,
+    monthlyGrossRevenue: 25000,
+    expectedMonthlyProfit: 18500,
+    annualProfit: 222000,
+    paybackPeriodMonths: 6,
+    roiPercent: 201.8,
+    gestationPeriodDays: 30,
+    dailyLabourHours: 2.0,
+    waterNeed: "Medium",
+    waterReqLitresPerDay: 200,
+    spaceRequiredDescMr: "५ गुंठे शेडनेट हाऊस (५०० चौ. मी.)",
+    spaceRequiredDescEn: "5 gunthas shade-net green structure (500 sq.m)",
+    riskLevel: "Medium",
+    subsidySchemeNameMr: "राष्ट्रीय फलोत्पादन अभियान (MIDH) लहान रोपवाटिका अनुदान",
+    subsidySchemeNameEn: "MIDH Small Nursery 50% Subsidy",
+    subsidyPercent: 50,
+    maxSubsidyAmount: 55000,
+    officialSchemePortalUrl: "https://midh.gov.in",
+    preferredDistricts: [
+      "Nashik",
+      "Pune",
+      "Ahmednagar",
+      "Solapur",
+      "Jalgaon",
+      "Satara",
+      "all",
+    ],
+    marketChannelsMr: [
+      "स्थानिक भाजीपाला उत्पादक शेतकरी (टोमॅटो, मिरची, वांगी, कांदा रोपे ₹१.२० ते ₹१.५० प्रति रोप)",
+      "फळबाग लागवड करणारे शेतकरी (डाळिंब, पेरू कलमे ₹३०-५० प्रति रोप)",
+      "शहरी घरगुती ग्राहक व बगीचा प्रेमी",
+    ],
+    marketChannelsEn: [
+      "Local vegetable farmers buying bulk pro-tray seedlings (₹1.20-1.50/sapling)",
+      "Fruit orchard growers for grafted pomegranate and guava saplings",
+      "Urban garden enthusiasts and retail nurseries",
+    ],
+    capitalCostBreakdown: [
+      { nameMr: "५ गुंठे शेडनेट हाऊस व फॉगर मिस्टिंग सिस्टीम", nameEn: "5-guntha green shade net & fogging mist system", cost: 65000 },
+      { nameMr: "१,००० प्रो-ट्रे (Pro-trays) व लोखंडी स्टँड", nameEn: "1,000 germination pro-trays & raised benches", cost: 20000 },
+      { nameMr: "कोकोपीट, व्हर्मिक्युलाईट व सेंद्रिय पोषण", nameEn: "Sterilized cocopeat & perlite growing medium", cost: 15000 },
+      { nameMr: "उच्च दर्जाचे प्रमाणित हायब्रीड बियाणे", nameEn: "Certified high-yielding hybrid seeds", cost: 10000 },
+    ],
+    synergies: [
+      {
+        source: "स्वतःच्या शेतीसाठी १००% निरोगी रोपे",
+        benefitMr: "स्वतःच्या शेतातील टोमॅटो, कांदा व मिरची लागवडीसाठी खात्रीशीर रोगमुक्त रोपे शून्य बाजारभावाने मिळतात.",
+        benefitEn: "Provides 100% disease-free vigorous seedlings for own farm plots at zero retail markup.",
+        savingsEstimatedPerYear: 24000,
+      },
+    ],
+    setupStepsMr: [
+      "५०% हिरवे शेडनेट वापरून कीटक प्रतिबंधक नेट हाऊस उभारा.",
+      "जमिनीपासून २ फूट उंचीचे लोखंडी स्टँड बसवा जेणेकरून मातीतील बुरशी रोपांना लागणार नाही.",
+      "धुतलेल्या कोकोपीटमध्ये प्रो-ट्रे भरून प्रमाणित बियाणे टोचा.",
+      "फॉगरने हलके पाणी द्या; २५ ते ३० दिवसांत निरोगी रोपे शेतकऱ्यांना विक्रीसाठी तयार होतात.",
+    ],
+    setupStepsEn: [
+      "Erect a 50% shade-net house with insect-proof side netting.",
+      "Install raised benches to prevent soil-borne fungal pathogens.",
+      "Fill 104-cavity pro-trays with treated cocopeat and sow certified seeds.",
+      "Maintain moisture via micro-foggers; deliver robust saplings at day 25-30.",
+    ],
+    descriptionMr: "भाजीपाला पट्ट्यात बारमाही प्रचंड मागणी असणारा व्यवसाय. केवळ एका महिन्याच्या कालावधीत रोपांची विक्री होऊन सातत्यपूर्ण मोठा नफा मिळतो.",
+    descriptionEn: "High-turnover enterprise with massive year-round demand in vegetable growing belts, delivering monthly cash windfalls.",
+    lastVerifiedDate: "13-Oct-2026",
+  },
+];

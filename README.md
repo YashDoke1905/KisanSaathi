@@ -1,116 +1,175 @@
-# 🌾 SmartHarvest: Full-Stack Smart Farming & Precision Agronomy Platform
+# 🌾 KisanSaathi (किसानसाथी)
+> **Production-Quality, Mobile-First Progressive Web App for Indian Smallholder Farmers**
 
-SmartHarvest is a precision agriculture platform integrating real-time **IoT telemetry**, **AI/ML agronomic analytics**, **automated smart irrigation**, and a **farm-to-market produce portal**.
-
----
-
-## 🌟 Key Features
-
-1. **IoT Telemetry & Smart Irrigation Actuator**
-   - Live sensor streams for **Soil Moisture (%)**, **Temperature (°C)**, **Humidity (%)**, **Soil pH**, **Sunlight (Lux)**, and **Battery Level**.
-   - **Autonomous Irrigation Automation**: Triggers drip pump below configurable soil moisture thresholds and halts upon reaching target capacity to conserve water.
-   - **Manual Operator Override**: One-click pump activation and speed control.
-   - **Real-Time SSE Streaming**: Live updates via Server-Sent Events (`/api/iot/stream`).
-   - **Farm Alerts Engine**: Incident logging for soil desiccation, extreme weather, and pump cycles.
-
-2. **AI & Machine Learning Diagnostics**
-   - **Leaf Disease Scanner**: Computer vision analysis of uploaded leaf imagery. Identifies Early Blight, Late Blight, Powdery Mildew, Leaf Rust, or Healthy Foliage with confidence scoring, symptom checklists, and dual organic & chemical treatment guides. Includes one-click test sample presets.
-   - **Crop Recommendation Engine**: Multi-dimensional agro-climatic matching (Nitrogen, Phosphorus, Potassium, pH, rainfall, temperature, humidity) recommending top-suited crops with seasonal windows and agronomic practices.
-   - **Harvest Yield Predictor**: Empirical regression estimating total tons and market valuation ($ USD) based on acreage, soil classification, fertilizer curves, and irrigation methods.
-
-3. **Agro-Weather Advisory**
-   - 5-day agricultural weather forecast with precipitation probabilities.
-   - Actionable farming advisories: foliar spraying windows, irrigation postponement, and pathogen humidity warnings.
-
-4. **Farm-to-Market Produce Portal**
-   - Direct listings by farmers with harvest dates, quantities, prices, and organic certifications.
-   - Search, category filters (Grains, Vegetables, Fruits, Pulses), and instant buyer ordering workflow with automatic stock deductions.
-   - Harvest batch listing modal for farmers.
+KisanSaathi is an open-source, multilingual, offline-first precision agriculture and financial intelligence platform designed from the ground up for small and marginal farmers in India (operational landholding $<2.0$ hectares), starting with Maharashtra.
 
 ---
 
-## 🏗️ Architecture & Technology Stack
+## 🌟 Core Pillars & Standards
 
-- **Backend**: Python 3.14, FastAPI, SQLAlchemy, SQLite, Pydantic V2, Pillow, NumPy, Pytest.
-- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS v4, Lucide Icons.
-- **Communication**: RESTful JSON APIs + Server-Sent Events (SSE).
+1. **Strictly 360px Mobile-First**: Built for entry-level Android smartphones with high daylight contrast, $\ge 48\text{px}$ touch targets, and a thumb-friendly bottom navigation bar.
+2. **Honest Data Provenance Badges**: Every single figure displayed is tagged with:
+   - 🟢 `Live data` (with source and fetch timestamp)
+   - 🟡 `Estimate` (transparent formula + step-by-step math explainer)
+   - 🔵 `Entered by you` (farmer customizations)
+   - 🟣 `Demo data` (graceful fallback when external government APIs lack keys)
+3. **Multilingual from Day 1**: English, Marathi (मराठी), and Hindi (हिंदी) with a one-tap header switcher and zero hardcoded UI strings.
+4. **Voice Interaction**: Native Web Speech API integration for speech-to-text voice input and speech synthesis read-aloud on all key screens.
+5. **Offline-First PWA**: Service Worker caching of the application shell, farm plots, and offline fallback.
+6. **Zero-Setup Database Architecture**: Out-of-the-box local SQLite with Prisma ORM, seamlessly switchable to Supabase PostgreSQL for cloud production.
+
+---
+
+## 🏗️ Technology Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 15 (App Router) + TypeScript (Strict Mode) |
+| **Styling** | Tailwind CSS with custom agricultural color tokens |
+| **Database** | Prisma ORM with SQLite (Local default) & Supabase PostgreSQL (Production) |
+| **PWA & Offline** | Web App Manifest, Service Worker (`sw.js`), IndexedDB |
+| **Authentication** | Password + Mobile OTP (Console simulator in dev; SMS API in prod) + 1-Tap Demo Login |
+| **Security** | Bcrypt password hashing, Jose JWT HTTP-only sessions, database-backed rate limiting |
+| **Voice & Audio** | Native Web Speech API (`SpeechRecognition` & `SpeechSynthesis`) |
+| **Testing** | Vitest unit test suite |
 
 ---
 
 ## 🚀 Quick Start Guide
 
-### Option 1: Automated Launch (Windows)
-Double-click `run_all.bat` (or execute from terminal):
+### 1. Prerequisites
+- Node.js `v20.0.0` or higher (`v24.x` recommended)
+- npm `v10.x` or higher
+
+### 2. Installation
 ```powershell
-.\run_all.bat
+# Clone or navigate to the repository
+cd SmartHarvest
+
+# Install all dependencies
+npm install
 ```
-This starts both the FastAPI backend and Vite frontend concurrently.
 
-### Option 2: Manual Step-by-Step
-
-#### 1. Backend Setup
+### 3. Environment Configuration
+Copy `.env.example` to `.env`:
 ```powershell
-cd backend
-# Activate virtual environment
-.\venv\Scripts\activate
-# Run server
-python run.py
+cp .env.example .env
 ```
-- API root: `http://localhost:8000`
-- Interactive OpenAPI Docs: `http://localhost:8000/docs`
+Default `.env` configuration works out of the box with zero external dependencies!
 
-#### 2. Frontend Setup
+### 4. Database Setup (Local SQLite)
 ```powershell
-cd frontend
+# Generate Prisma Client
+npm run prisma:generate
+
+# Sync schema to SQLite database (creates dev.db)
+npx prisma db push
+
+# Pre-seed demo farmer account (Tukaram Patil, Nashik)
+npm run prisma:seed
+```
+
+### 5. Run Development Server
+```powershell
 npm run dev
 ```
-- Web Application: `http://localhost:5173`
+Open **[http://localhost:3000](http://localhost:3000)** in your browser (use Chrome DevTools mobile view at 360px width).
 
----
-
-## 🧪 Testing
-
-Run backend pytest suite:
+### 6. Run Automated Tests
 ```powershell
-cd backend
-..\backend\venv\Scripts\python.exe -m pytest tests/
+npm test
 ```
-All 7 unit and integration tests validate the root endpoint, telemetry controls, crop recommendations, yield calculations, leaf pathology scans, weather advisory, and marketplace order processing.
 
 ---
 
-## 📁 Repository Structure
+## 👤 Test Credentials & 1-Tap Login
+
+To evaluate the application instantly, you can:
+- **Option A (Instant)**: Click the **"१-टॅप नमुना लॉगिन (तुकाराम पाटील)"** button on the `/login` screen.
+- **Option B (Username & Password)**:
+  - **Username**: `demo`
+  - **Password**: `farmer123`
+- **Option C (Mobile OTP in Dev Mode)**:
+  - Enter mobile number: `9876543210`
+  - In Dev Mode (`OTP_DEV_MODE="true"`), the 6-digit OTP is automatically printed in your terminal console and shown in the amber debug banner on screen!
+
+---
+
+## 🗄️ Database Provider Switching (SQLite ⇄ Supabase Postgres)
+
+The application provides a dedicated switching script to maintain portable models across local SQLite and cloud PostgreSQL:
+
+### To switch to Supabase PostgreSQL (Cloud Production):
+```powershell
+npm run db:switch:postgres
+```
+Then set `DATABASE_URL` in `.env` to your Supabase PostgreSQL connection string.
+
+### To switch back to Local SQLite:
+```powershell
+npm run db:switch:sqlite
+```
+
+---
+
+## 📂 Project Architecture
 
 ```text
 SmartHarvest/
-├── backend/
-│   ├── app/
-│   │   ├── main.py              # FastAPI app, lifespan simulation loop, database seeder
-│   │   ├── database.py          # SQLite engine & session factory
-│   │   ├── models/              # SQLAlchemy models (Telemetry, Irrigation, Alerts, Marketplace)
-│   │   ├── schemas/             # Pydantic validation schemas
-│   │   ├── routers/             # API endpoints (iot, ai, marketplace, weather)
-│   │   ├── ml/                  # Agronomic models (disease_classifier, crop_recommender, yield_predictor)
-│   │   └── services/            # IoT simulator and agro-weather service
-│   ├── tests/                   # Pytest test suite
-│   ├── requirements.txt
-│   └── run.py
-├── frontend/
-│   ├── src/
-│   │   ├── components/Navbar.tsx
-│   │   ├── pages/Dashboard.tsx
-│   │   ├── pages/TelemetryPage.tsx
-│   │   ├── pages/AiAdvisorPage.tsx
-│   │   ├── pages/YieldPredictorPage.tsx
-│   │   ├── pages/MarketplacePage.tsx
-│   │   ├── services/api.ts      # Client API service
-│   │   ├── types/index.ts       # TypeScript definitions
-│   │   ├── App.tsx
-│   │   └── index.css
-│   ├── package.json
-│   └── vite.config.ts
-├── run_backend.bat
-├── run_frontend.bat
-├── run_all.bat
-└── README.md
+├── archive/                      # Preserved v0 draft legacy backend and frontend
+│   └── v0-draft/
+├── prisma/
+│   ├── schema.prisma             # Active Prisma schema
+│   ├── schema.sqlite.prisma      # SQLite schema source
+│   ├── schema.postgres.prisma    # PostgreSQL / Supabase schema source
+│   └── seed.ts                   # Realistic Maharashtra farmer seeder
+├── public/
+│   ├── manifest.json             # PWA web app manifest
+│   ├── sw.js                     # Service Worker script
+│   └── icons/                    # App icons
+├── src/
+│   ├── app/                      # Next.js 15 App Router
+│   │   ├── page.tsx              # Smart Home Dashboard shell
+│   │   ├── login/page.tsx        # Password, OTP & Demo Auth
+│   │   ├── signup/page.tsx       # 60-second onboarding
+│   │   ├── forgot-password/      # OTP-based password reset
+│   │   ├── farm/page.tsx         # Farm Plot Manager & Completeness Meter
+│   │   ├── market/page.tsx       # Mandi Market shell (Phase 4)
+│   │   ├── schemes/page.tsx      # Schemes shell (Phase 5)
+│   │   ├── more/page.tsx         # Settings, Language & Account
+│   │   ├── offline/page.tsx      # Offline fallback page
+│   │   └── api/                  # Route handlers (Auth, Farm, OTP)
+│   ├── components/               # 360px-first UI components
+│   │   ├── Header.tsx            # Language toggle, network & dark mode
+│   │   ├── BottomNav.tsx         # 5-tab sticky bottom navigation
+│   │   ├── ProvenanceBadge.tsx   # Live / Estimate / User / Demo badges
+│   │   ├── UnitConverterModal.tsx # Acre / Guntha / Hectare / Bigha converter
+│   │   └── VoiceAssistantButton.tsx # Web Speech API voice reader & mic
+│   ├── lib/
+│   │   ├── auth.ts               # Jose JWT session & cookie handling
+│   │   ├── prisma.ts             # Prisma singleton client
+│   │   ├── rateLimit.ts          # Database-backed rate limiter
+│   │   ├── sms.ts                # Dev & Prod SMS OTP adapter
+│   │   ├── languageContext.tsx   # Multilingual i18n & Speech synthesizer
+│   │   └── themeContext.tsx      # Light/Dark mode state
+│   └── locales/
+│       ├── en.json               # English translations
+│       ├── mr.json               # Marathi translations (मराठी)
+│       └── hi.json               # Hindi translations (हिंदी)
+└── tests/
+    └── phase1.test.ts            # Security, Auth & Land Math test suite
 ```
+
+---
+
+## 🚢 Deployment to Production (Vercel)
+
+1. Push your repository to GitHub.
+2. Import the repository in [Vercel](https://vercel.com).
+3. Switch database provider to PostgreSQL: `npm run db:switch:postgres`.
+4. Configure environment variables in Vercel project settings:
+   - `DATABASE_URL`: Your Supabase connection pooler URL (`postgres://...`).
+   - `JWT_SECRET`: A secure 32+ character random string.
+   - `OTP_DEV_MODE`: `"false"`.
+   - `SMS_PROVIDER_API_KEY`: Your SMS gateway API key.
+5. Deploy! Vercel automatically detects Next.js 15 and deploys edge route handlers and static assets.

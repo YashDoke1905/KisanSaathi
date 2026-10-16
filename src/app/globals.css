@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-manrope: "Manrope", system-ui, -apple-system, sans-serif;
+  --font-noto-devanagari: "Noto Sans Devanagari", system-ui, -apple-system, sans-serif;
+
+  /* Warm Canvas & Parchment Palette (Daylight High-Contrast) */
+  --background: #FAF8F4;
+  --surface-card: #FFFFFF;
+  --surface-subtle: #F5EFEB;
+  --surface-accent: #EFE7DC;
+  --foreground: #18231C;
+  --foreground-muted: #5F7164;
+  
+  /* Brand Tokens */
+  --brand-forest: #1B4332;
+  --brand-forest-mid: #2D6A4F;
+  --brand-soil: #65492E;
+  --brand-gold: #DF9115;
+}
+
+.dark {
+  /* Deep Earth Night Palette */
+  --background: #111512;
+  --surface-card: #19201B;
+  --surface-subtle: #212B24;
+  --surface-accent: #2B3830;
+  --foreground: #EDE9E1;
+  --foreground-muted: #8E9F93;
+
+  --brand-forest: #2D6A4F;
+  --brand-forest-mid: #40916C;
+  --brand-soil: #BA9C7D;
+  --brand-gold: #F4C76D;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-manrope), var(--font-noto-devanagari), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+
+/* Ensure minimum touch target for interactive controls across all screens */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* 52px Standard Agricultural Touch Target Button Styles */
+.btn-solid-primary {
+  height: 52px;
+  min-height: 52px;
+  padding: 0 1.25rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #1B4332;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(27, 67, 50, 0.2);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-solid-primary:hover {
+  background-color: #2D6A4F;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(27, 67, 50, 0.28);
+}
+
+.btn-solid-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-solid-secondary {
+  height: 52px;
+  min-height: 52px;
+  padding: 0 1.25rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #F5EFEB;
+  color: #1B4332;
+  border: 1px solid #EFE7DC;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .btn-solid-secondary {
+  background-color: #212B24;
+  color: #EDE9E1;
+  border-color: #2B3830;
+}
+
+.btn-solid-secondary:hover {
+  background-color: #EFE7DC;
+}
+
+.dark .btn-solid-secondary:hover {
+  background-color: #2B3830;
+}
+
+/* Money / Numeric Display: Tabular Numbers with Clean Kerning */
+.money-numeral {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+/* Warm Organic Card Surfaces */
+.card-warm {
+  background-color: var(--surface-card);
+  border: 1px solid rgba(223, 211, 191, 0.65);
+  box-shadow: 0 2px 14px -2px rgba(27, 67, 50, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+  border-radius: 1.25rem;
+}
+
+.dark .card-warm {
+  border-color: rgba(43, 56, 48, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Safe area padding for mobile notches and bottom bars */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+}
+
+/* Accessibility: Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

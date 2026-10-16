@@ -1,0 +1,45 @@
+{
+  "name": "kisansaathi",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "prisma:generate": "prisma generate --schema=prisma/schema.sqlite.prisma",
+    "prisma:migrate": "prisma migrate dev --schema=prisma/schema.sqlite.prisma --name init",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "db:switch:postgres": "tsx scripts/switch-db-provider.ts postgres",
+    "db:switch:sqlite": "tsx scripts/switch-db-provider.ts sqlite"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcryptjs": "^3.0.2",
+    "clsx": "^2.1.1",
+    "jose": "^6.0.8",
+    "lucide-react": "^1.16.0",
+    "next": "^15.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.13.9",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.21.0",
+    "eslint-config-next": "^15.2.0",
+    "postcss": "^8.5.3",
+    "prisma": "^6.4.1",
+    "puppeteer-core": "^25.14.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

@@ -1,0 +1,289 @@
+// ==============================================================================
+// KisanSaathi PostgreSQL Prisma Schema (Production Supabase Adapter)
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+// Authentication & Security
+// -----------------------------------------------------------------------------
+model User {
+  id           String         @id @default(cuid())
+  phone        String?        @unique
+  username     String?        @unique
+  passwordHash String
+  role         String         @default("farmer")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  profile      FarmerProfile?
+}
+
+model OtpSession {
+  id         String   @id @default(cuid())
+  phone      String
+  otpCode    String
+  expiresAt  DateTime
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([phone, createdAt])
+}
+
+model RateLimitRecord {
+  id         String   @id @default(cuid())
+  key        String
+  timestamp  DateTime @default(now())
+
+  @@index([key, timestamp])
+}
+
+// -----------------------------------------------------------------------------
+// Farmer Profile & Multi-Farm / Plot Hierarchy
+// -----------------------------------------------------------------------------
+model FarmerProfile {
+  id                String     @id @default(cuid())
+  userId            String     @unique
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName          String
+  preferredLanguage String     @default("mr")
+  state             String     @default("Maharashtra")
+  district          String
+  taluka            String
+  village           String
+  pincode           String?
+  latitude          Float?
+  longitude         Float?
+  category          String     @default("General")
+  experienceYears   Int        @default(5)
+  riskAppetite      String     @default("medium")
+  budgetCapacity    Float      @default(50000.0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  farms             Farm[]
+  documents         Document[]
+}
+
+model Farm {
+  id                 String        @id @default(cuid())
+  farmerId           String
+  farmer             FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  name               String
+  surveyNumber       String?
+  ulpin              String?
+  ownershipType      String        @default("owned")
+  areaAcre           Float
+  soilType           String        @default("Medium_Black")
+  soilPh             Float?
+  soilEc             Float?
+  soilOrganicCarbon  Float?
+  terrain            String        @default("Flat")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  waterSources       WaterSource[]
+  cropPlans          CropPlan[]
+  expenses           Expense[]
+  incomes            Income[]
+}
+
+model WaterSource {
+  id                    String   @id @default(cuid())
+  farmId                String
+  farm                  Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  sourceType            String
+  seasonality           String   @default("Perennial")
+  hasDrip               Boolean  @default(false)
+  hasSprinkler          Boolean  @default(false)
+  electricityHoursDaily Float    @default(8.0)
+  pumpHorsepower        Float    @default(5.0)
+  createdAt             DateTime @default(now())
+}
+
+// -----------------------------------------------------------------------------
+// Skeletons for Phase 2-7 Core Features (Portable across SQLite & Postgres)
+// -----------------------------------------------------------------------------
+model Crop {
+  id                 String         @id
+  nameEn             String
+  nameMr             String
+  nameHi             String
+  category           String
+  season             String
+  durationDaysMin    Int
+  durationDaysMax    Int
+  baseYieldPerAcre   Float
+  seedRateKgPerAcre  Float
+  basePricePerQtl    Float
+  waterReqMm         Float
+  varieties          CropVariety[]
+  stages             CropStage[]
+  plans              CropPlan[]
+  priceRecords       PriceRecord[]
+}
+
+model CropVariety {
+  id             String     @id @default(cuid())
+  cropId         String
+  crop           Crop       @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  varietyName    String
+  durationDays   Int
+  yieldPotential Float
+}
+
+model CropStage {
+  id                      String   @id @default(cuid())
+  cropId                  String
+  crop                    Crop     @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  stageNumber             Int
+  stageName               String
+  startDay                Int
+  endDay                  Int
+  kcFactor                Float
+  irrigationFrequencyDays Int
+  fertilizerGuidance      String?
+  pestWatchJson           String?
+}
+
+model CropPlan {
+  id               String        @id @default(cuid())
+  farmId           String
+  farm             Farm          @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  cropId           String
+  crop             Crop          @relation(fields: [cropId], references: [id])
+  areaAcre         Float
+  sowingDate       DateTime
+  harvestDate      DateTime
+  irrigationMethod String        @default("drip")
+  status           String        @default("active")
+  
+  estTotalCost     Float
+  estExpectedYield Float
+  estExpectedPrice Float
+  estGrossRevenue  Float
+  estNetProfit     Float
+
+  actualYield      Float?
+  actualSoldPrice  Float?
+  actualTotalCost  Float?
+  actualNetProfit  Float?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  tasks            PlanTask[]
+  expenses         Expense[]
+  incomes          Income[]
+}
+
+model PlanTask {
+  id           String    @id @default(cuid())
+  planId       String
+  plan         CropPlan  @relation(fields: [planId], references: [id], onDelete: Cascade)
+  dueDate      DateTime
+  titleEn      String
+  titleMr      String
+  titleHi      String
+  category     String
+  quantityDesc String?
+  isCompleted  Boolean   @default(false)
+  completedAt  DateTime?
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  planId      String?
+  plan        CropPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  farmId      String
+  farm        Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  expenseDate DateTime
+  category    String
+  amount      Float
+  notes       String?
+  createdAt   DateTime @default(now())
+}
+
+model Income {
+  id              String   @id @default(cuid())
+  planId          String?
+  plan            CropPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  farmId          String
+  farm            Farm     @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  saleDate        DateTime
+  quantityQuintal Float
+  ratePerQuintal  Float
+  totalAmount     Float
+  mandiName       String?
+  createdAt       DateTime @default(now())
+}
+
+model MandiMarket {
+  id                  String        @id
+  name                String
+  state               String        @default("Maharashtra")
+  district            String
+  latitude            Float
+  longitude           Float
+  marketChargePercent Float         @default(2.0)
+  hamaliPerQuintal    Float         @default(15.0)
+  prices              PriceRecord[]
+}
+
+model PriceRecord {
+  id            String      @id @default(cuid())
+  mandiId       String
+  mandi         MandiMarket @relation(fields: [mandiId], references: [id], onDelete: Cascade)
+  cropId        String
+  crop          Crop        @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  recordDate    DateTime
+  minPrice      Float
+  modalPrice    Float
+  maxPrice      Float
+  arrivalTonnes Float       @default(0.0)
+  source        String      @default("Agmarknet")
+
+  @@index([cropId, mandiId, recordDate])
+}
+
+model Scheme {
+  id                   String   @id
+  titleEn              String
+  titleMr              String
+  titleHi              String
+  authority            String
+  maxBenefitAmount     Float
+  benefitDescriptionMr String
+  documentsRequired    String
+  officialPortalUrl    String
+  helplineNumber       String?
+  lastVerifiedDate     String
+}
+
+model Document {
+  id           String        @id @default(cuid())
+  farmerId     String
+  farmer       FarmerProfile @relation(fields: [farmerId], references: [id], onDelete: Cascade)
+  documentType String
+  filePath     String
+  isVerified   Boolean       @default(false)
+  uploadedAt   DateTime      @default(now())
+}
+
+model SideBusiness {
+  id                     String   @id
+  titleEn                String
+  titleMr                String
+  titleHi                String
+  category               String
+  setupCostMin           Float
+  monthlyOperatingCost   Float
+  dailyLabourHours       Float
+  waterReqLitresPerDay   Float
+  expectedMonthlyProfit  Float
+  paybackPeriodMonths    Int
+  riskLevel              String   @default("Medium")
+}
