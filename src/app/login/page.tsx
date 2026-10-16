@@ -4,11 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/lib/languageContext";
-import { Sprout, Phone, Lock, User, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
+import { Sprout, Phone, Lock, User, ArrowRight, Sparkles, AlertCircle, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
+  const isMr = language === "mr";
 
   const [tab, setTab] = useState<"password" | "otp">("password");
   const [identifier, setIdentifier] = useState("");
@@ -125,225 +126,255 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-5 py-2">
-      {/* Brand Hero */}
-      <div className="text-center space-y-1">
-        <div className="w-14 h-14 bg-kisan-green-700 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+    <div className="max-w-md mx-auto space-y-5 py-4">
+      {/* Brand Hero Card */}
+      <div className="text-center space-y-2 pt-2">
+        <div className="w-16 h-16 rounded-2xl bg-forest-800 text-white flex items-center justify-center mx-auto shadow-elevated border border-forest-700/40 relative">
           <Sprout className="w-8 h-8 text-white" />
+          <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-harvest-500 border-2 border-white dark:border-stone-900 flex items-center justify-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-white"></span>
+          </span>
         </div>
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
-          {t("app.name")}
-        </h1>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 max-w-xs mx-auto">
-          {t("app.tagline")}
-        </p>
+        <div>
+          <h1 className="text-2xl font-black tracking-tight text-stone-900 dark:text-stone-100">
+            {t("app.name")}
+          </h1>
+          <p className="text-xs text-stone-600 dark:text-stone-400 mt-0.5 font-medium">
+            {isMr
+              ? "महाराष्ट्रातील शेतकऱ्यांचे विश्वासू डिजिटल साथी"
+              : "Calm, Scientific Farm Management & Decision Advisory"}
+          </p>
+        </div>
       </div>
 
-      {/* 1-Tap Instant Demo Login Button */}
-      <button
-        type="button"
-        onClick={handleDemoLogin}
-        disabled={isLoading}
-        className="w-full bg-linear-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all active:scale-98 min-h-[48px]"
-      >
-        <Sparkles className="w-5 h-5 text-amber-200" />
-        <span>{t("auth.demo_login")}</span>
-      </button>
-
-      {/* Login Tab Switcher */}
-      <div className="grid grid-cols-2 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
+      {/* 1-Tap Instant Demo Login Hero Pill */}
+      <div className="card-warm p-3.5 border-harvest-500/30 dark:border-harvest-500/30 bg-harvest-500/5">
+        <div className="flex items-center justify-between mb-2.5">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-soil-800 dark:text-harvest-400">
+            <Sparkles className="w-4 h-4 text-harvest-600 animate-pulse" />
+            <span>{isMr ? "झटपट चाचणी (पासवर्डशिवाय)" : "Quick Test (1-Tap)"}</span>
+          </div>
+          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-harvest-500/15 text-soil-800 dark:text-harvest-300">
+            {isMr ? "१-क्लिक लॉगिन" : "Instant"}
+          </span>
+        </div>
         <button
           type="button"
-          onClick={() => {
-            setTab("password");
-            setError(null);
-          }}
-          className={`py-2.5 text-xs font-bold rounded-lg transition-all min-h-[44px] ${
-            tab === "password"
-              ? "bg-white dark:bg-zinc-700 text-kisan-green-800 dark:text-kisan-green-300 shadow-xs"
-              : "text-zinc-600 dark:text-zinc-400"
-          }`}
+          onClick={handleDemoLogin}
+          disabled={isLoading}
+          className="w-full h-12 rounded-xl bg-soil-700 hover:bg-soil-800 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-sm transition-all"
         >
-          Password
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            setTab("otp");
-            setError(null);
-          }}
-          className={`py-2.5 text-xs font-bold rounded-lg transition-all min-h-[44px] ${
-            tab === "otp"
-              ? "bg-white dark:bg-zinc-700 text-kisan-green-800 dark:text-kisan-green-300 shadow-xs"
-              : "text-zinc-600 dark:text-zinc-400"
-          }`}
-        >
-          Mobile OTP
+          <Sparkles className="w-4 h-4 text-harvest-300" />
+          <span>{t("auth.demo_login")}</span>
+          <ArrowRight className="w-4 h-4 text-white/80" />
         </button>
       </div>
 
-      {error && (
-        <div className="p-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 rounded-xl flex items-start gap-2 text-rose-700 dark:text-rose-300 text-xs">
-          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{error}</span>
-        </div>
-      )}
-
-      {/* Mode 1: Username & Password */}
-      {tab === "password" && (
-        <form onSubmit={handlePasswordLogin} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              {t("auth.username")} / {t("auth.phone")}
-            </label>
-            <div className="relative">
-              <User className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
-              <input
-                type="text"
-                required
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="demo or 9876543210"
-                className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                {t("auth.password")}
-              </label>
-              <Link
-                href={identifier ? `/forgot-password?identifier=${encodeURIComponent(identifier)}` : "/forgot-password"}
-                className="text-xs font-semibold text-kisan-green-700 dark:text-kisan-green-400 hover:underline min-h-[36px] flex items-center"
-              >
-                {t("auth.forgot_password")}
-              </Link>
-            </div>
-            <div className="relative">
-              <Lock className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-              />
-            </div>
-          </div>
-
+      {/* Login Card */}
+      <div className="card-warm p-5 space-y-4">
+        {/* Login Tab Switcher */}
+        <div className="grid grid-cols-2 bg-stone-100 dark:bg-stone-800/70 p-1 rounded-xl border border-stone-200/50 dark:border-stone-700/50">
           <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-kisan-green-700 hover:bg-kisan-green-800 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98 min-h-[48px]"
+            type="button"
+            onClick={() => {
+              setTab("password");
+              setError(null);
+            }}
+            className={`h-10 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+              tab === "password"
+                ? "bg-white dark:bg-stone-900 text-forest-800 dark:text-forest-300 shadow-sm"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+            }`}
           >
-            <span>{isLoading ? t("common.loading") : t("auth.login")}</span>
-            <ArrowRight className="w-4 h-4" />
+            <Lock className="w-3.5 h-3.5" />
+            <span>{isMr ? "पासवर्ड लॉगिन" : "Password"}</span>
           </button>
-        </form>
-      )}
+          <button
+            type="button"
+            onClick={() => {
+              setTab("otp");
+              setError(null);
+            }}
+            className={`h-10 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+              tab === "otp"
+                ? "bg-white dark:bg-stone-900 text-forest-800 dark:text-forest-300 shadow-sm"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+            }`}
+          >
+            <Phone className="w-3.5 h-3.5" />
+            <span>{isMr ? "मोबाईल ओटीपी" : "Mobile OTP"}</span>
+          </button>
+        </div>
 
-      {/* Mode 2: Mobile OTP Login */}
-      {tab === "otp" && (
-        <div className="space-y-4">
-          {!otpSent ? (
-            <form onSubmit={handleSendOtp} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  {t("auth.phone")}
-                </label>
-                <div className="relative">
-                  <Phone className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
-                  <input
-                    type="tel"
-                    required
-                    pattern="[0-9]{10}"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="10-digit mobile number"
-                    className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-                  />
-                </div>
-              </div>
+        {error && (
+          <div className="p-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 rounded-xl flex items-start gap-2.5 text-rose-700 dark:text-rose-300 text-xs animate-shake">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <span className="font-medium">{error}</span>
+          </div>
+        )}
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-kisan-green-700 hover:bg-kisan-green-800 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98 min-h-[48px]"
-              >
-                <span>{isLoading ? t("common.loading") : t("auth.send_otp")}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              {debugOtp && (
-                <div className="p-3 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-xl text-amber-900 dark:text-amber-200 text-xs">
-                  <span className="font-bold">{t("auth.dev_otp_notice")}: </span>
-                  <span className="font-mono text-base font-black tracking-widest text-kisan-amber-900">
-                    {debugOtp}
-                  </span>
-                </div>
-              )}
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-                  {t("auth.otp_code")}
-                </label>
+        {/* Mode 1: Username & Password */}
+        {tab === "password" && (
+          <form onSubmit={handlePasswordLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5">
+                {t("auth.username")} / {t("auth.phone")}
+              </label>
+              <div className="relative">
+                <User className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   required
-                  maxLength={6}
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value)}
-                  placeholder="123456"
-                  className="w-full text-center tracking-widest text-2xl font-bold py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={isMr ? "demo किंवा मोबाईल क्रमांक" : "demo or 9876543210"}
+                  className="w-full h-12 pl-11 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600"
                 />
               </div>
+            </div>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-kisan-green-700 hover:bg-kisan-green-800 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98 min-h-[48px]"
-              >
-                <span>{isLoading ? t("common.loading") : t("auth.verify_otp")}</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-
-              <div className="flex justify-between items-center text-xs">
-                <button
-                  type="button"
-                  onClick={() => setOtpSent(false)}
-                  className="text-zinc-500 hover:underline min-h-[40px] flex items-center"
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-bold text-stone-700 dark:text-stone-300">
+                  {t("auth.password")}
+                </label>
+                <Link
+                  href={identifier ? `/forgot-password?identifier=${encodeURIComponent(identifier)}` : "/forgot-password"}
+                  className="text-xs font-bold text-forest-700 dark:text-forest-400 hover:underline min-h-[36px] flex items-center"
                 >
-                  Change phone number
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="text-kisan-green-700 dark:text-kisan-green-400 font-semibold hover:underline min-h-[40px] flex items-center"
-                >
-                  {t("auth.resend_otp")}
-                </button>
+                  {t("auth.forgot_password")}
+                </Link>
               </div>
-            </form>
-          )}
-        </div>
-      )}
+              <div className="relative">
+                <Lock className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-12 pl-11 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600"
+                />
+              </div>
+            </div>
 
-      {/* Signup Redirection */}
-      <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 text-center">
-        <p className="text-xs text-zinc-600 dark:text-zinc-400">
-          {t("auth.dont_have_account")}{" "}
-          <Link
-            href="/signup"
-            className="font-bold text-kisan-green-700 dark:text-kisan-green-400 hover:underline inline-flex items-center min-h-[44px]"
-          >
-            {t("auth.signup")}
-          </Link>
-        </p>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-13 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-card transition-all"
+            >
+              <span>{isLoading ? t("common.loading") : t("auth.login")}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        )}
+
+        {/* Mode 2: Mobile OTP Login */}
+        {tab === "otp" && (
+          <div className="space-y-4">
+            {!otpSent ? (
+              <form onSubmit={handleSendOtp} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5">
+                    {t("auth.phone")}
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-3.5 text-xs font-bold text-stone-500">
+                      +91
+                    </span>
+                    <input
+                      type="tel"
+                      required
+                      pattern="[0-9]{10}"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="9876543210"
+                      className="w-full h-12 pl-12 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600 font-mono tracking-wider"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-13 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-card transition-all"
+                >
+                  <span>{isLoading ? t("common.loading") : t("auth.send_otp")}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyOtp} className="space-y-4">
+                {debugOtp && (
+                  <div className="p-3.5 bg-harvest-500/10 border border-harvest-500/30 rounded-xl text-soil-900 dark:text-harvest-200 text-xs">
+                    <div className="flex items-center gap-1.5 font-bold mb-1 text-soil-800 dark:text-harvest-300">
+                      <ShieldCheck className="w-4 h-4 text-harvest-600" />
+                      <span>{t("auth.dev_otp_notice")}:</span>
+                    </div>
+                    <div className="font-mono text-2xl font-black tracking-widest text-forest-800 dark:text-forest-300 text-center py-1">
+                      {debugOtp}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5 text-center">
+                    {t("auth.otp_code")}
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value)}
+                    placeholder="123456"
+                    className="w-full h-14 text-center tracking-widest text-2xl font-black rounded-xl border-2 border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:border-forest-600 font-mono"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-13 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-card transition-all"
+                >
+                  <span>{isLoading ? t("common.loading") : t("auth.verify_otp")}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+
+                <div className="flex justify-between items-center text-xs pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setOtpSent(false)}
+                    className="text-stone-500 hover:text-stone-800 dark:hover:text-stone-300 font-medium min-h-[40px] flex items-center"
+                  >
+                    ← {isMr ? "क्रमांक बदला" : "Change phone number"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    className="text-forest-700 dark:text-forest-400 font-bold hover:underline min-h-[40px] flex items-center"
+                  >
+                    {t("auth.resend_otp")}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        )}
+
+        {/* Signup Link */}
+        <div className="pt-3 border-t border-stone-100 dark:border-stone-800 text-center">
+          <p className="text-xs text-stone-600 dark:text-stone-400">
+            {t("auth.dont_have_account")}{" "}
+            <Link
+              href="/signup"
+              className="font-bold text-forest-800 dark:text-forest-400 hover:underline inline-flex items-center gap-1 min-h-[44px]"
+            >
+              <span>{t("auth.signup")}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

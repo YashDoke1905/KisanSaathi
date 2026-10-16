@@ -13,14 +13,15 @@ import {
   CheckCircle2,
   Sparkles,
   ArrowLeft,
-  User,
   ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
 
 function ForgotPasswordContent() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isMr = language === "mr";
 
   const [identifier, setIdentifier] = useState("");
   const [targetPhone, setTargetPhone] = useState("");
@@ -124,186 +125,195 @@ function ForgotPasswordContent() {
   };
 
   return (
-    <div className="space-y-4 py-2">
+    <div className="max-w-md mx-auto space-y-4 py-3">
       {/* Back button */}
       <Link
         href="/login"
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-kisan-green-700 min-h-[40px]"
+        className="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 dark:text-stone-400 hover:text-forest-800 dark:hover:text-forest-300 min-h-[40px]"
       >
         <ArrowLeft className="w-4 h-4" />
-        <span>Back to Login (लॉगिनवर परत जा)</span>
+        <span>{isMr ? "← लॉगिनवर परत जा" : "← Back to Login"}</span>
       </Link>
 
-      <div className="text-center space-y-1">
-        <div className="w-12 h-12 bg-kisan-soil-700 text-white rounded-2xl flex items-center justify-center mx-auto shadow-sm">
-          <KeyRound className="w-6 h-6 text-white" />
+      <div className="text-center space-y-2">
+        <div className="w-14 h-14 rounded-2xl bg-soil-800 text-white flex items-center justify-center mx-auto shadow-elevated border border-soil-700/40">
+          <KeyRound className="w-7 h-7 text-white" />
         </div>
-        <h1 className="text-xl font-bold text-zinc-900 dark:text-white">
+        <h1 className="text-2xl font-black tracking-tight text-stone-900 dark:text-stone-100">
           {t("auth.reset_password")}
         </h1>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400">
-          Enter your registered Mobile Number or Username to receive a reset OTP.
+        <p className="text-xs text-stone-600 dark:text-stone-400 font-medium max-w-xs mx-auto">
+          {isMr
+            ? "आपला नोंदणीकृत मोबाईल किंवा युझरनेम टाका, आम्ही लगेच सुरक्षित ओटीपी पाठवू."
+            : "Enter your registered Mobile Number or Username to receive a reset OTP."}
         </p>
       </div>
 
       {error && (
-        <div className="p-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 rounded-xl flex items-start gap-2 text-rose-700 dark:text-rose-300 text-xs">
+        <div className="p-3 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 rounded-xl flex items-start gap-2.5 text-rose-700 dark:text-rose-300 text-xs animate-shake">
           <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-          <span>{error}</span>
+          <span className="font-medium">{error}</span>
         </div>
       )}
 
       {success && (
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-start gap-2 text-emerald-800 dark:text-emerald-300 text-xs font-medium">
-          <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+        <div className="p-3.5 bg-forest-50 dark:bg-forest-950/60 border border-forest-300 dark:border-forest-800 rounded-xl flex items-start gap-2.5 text-forest-800 dark:text-forest-200 text-xs font-medium">
+          <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-forest-600" />
           <span>{success}</span>
         </div>
       )}
 
-      {/* Step 1: Request OTP Form */}
-      {!otpSent ? (
-        <form onSubmit={handleSendOtp} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              {t("auth.phone")} / {t("auth.username")}
-            </label>
-            <div className="relative">
-              <Phone className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
-              <input
-                type="text"
-                required
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="उदा. 9876543210 किंवा demo"
-                className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-              />
-            </div>
-            <span className="text-[11px] text-zinc-500 mt-1 block">
-              Tip: You can enter your 10-digit phone number or your username (e.g. `demo`).
-            </span>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-kisan-green-700 hover:bg-kisan-green-800 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98 min-h-[48px]"
-          >
-            <span>{isLoading ? t("common.loading") : t("auth.send_otp")}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-      ) : (
-        /* Step 2: Verify OTP & Enter New Password Form */
-        <form onSubmit={handleResetPassword} className="space-y-3.5">
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-900 dark:text-emerald-200 text-xs flex items-center justify-between">
+      <div className="card-warm p-5 space-y-4">
+        {/* Step 1: Request OTP Form */}
+        {!otpSent ? (
+          <form onSubmit={handleSendOtp} className="space-y-4">
             <div>
-              <span className="font-bold">OTP Dispatched</span>
-              <p className="text-[11px] text-emerald-800 dark:text-emerald-300">
-                Code sent to registered mobile: {maskedPhone || targetPhone}
-              </p>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5">
+                {t("auth.phone")} / {t("auth.username")}
+              </label>
+              <div className="relative">
+                <Phone className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  required
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  placeholder={isMr ? "उदा. 9876543210 किंवा demo" : "e.g. 9876543210 or demo"}
+                  className="w-full h-12 pl-11 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600"
+                />
+              </div>
+              <span className="text-[11px] text-stone-500 dark:text-stone-400 mt-1.5 block">
+                {isMr
+                  ? "नोंद: आपण १० अंकी मोबाईल किंवा 'demo' असे युझरनेम वापरू शकता."
+                  : "Tip: Enter your 10-digit registered mobile or your username."}
+              </span>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                setOtpSent(false);
-                setOtpCode("");
-              }}
-              className="text-xs font-semibold text-kisan-green-800 dark:text-kisan-green-300 underline min-h-[36px]"
-            >
-              Change
-            </button>
-          </div>
 
-          {/* Dev Mode 1-Tap Auto-fill Button */}
-          {debugOtp && (
-            <div className="p-3 bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-800 rounded-xl space-y-2">
-              <div className="text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between">
-                <span>
-                  <strong>Dev Mode Verification OTP: </strong>
-                  <span className="font-mono text-base font-black tracking-widest text-kisan-amber-900 dark:text-amber-300">
-                    {debugOtp}
-                  </span>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-13 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-card transition-all"
+            >
+              <span>{isLoading ? t("common.loading") : t("auth.send_otp")}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        ) : (
+          /* Step 2: Verify OTP & Enter New Password Form */
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div className="p-3 bg-forest-50 dark:bg-forest-950/40 border border-forest-200 dark:border-forest-800 rounded-xl text-forest-900 dark:text-forest-200 text-xs flex items-center justify-between">
+              <div>
+                <span className="font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-forest-600" />
+                  {isMr ? "ओटीपी पाठवला आहे" : "OTP Dispatched"}
                 </span>
+                <p className="text-[11px] text-forest-800 dark:text-forest-300 mt-0.5">
+                  {maskedPhone || targetPhone}
+                </p>
               </div>
               <button
                 type="button"
-                onClick={() => setOtpCode(debugOtp)}
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-xs active:scale-98 min-h-[40px]"
+                onClick={() => {
+                  setOtpSent(false);
+                  setOtpCode("");
+                }}
+                className="text-xs font-bold text-forest-800 dark:text-forest-300 underline min-h-[36px]"
               >
-                <Sparkles className="w-4 h-4" />
-                <span>१-टॅप OTP भरा (1-Tap Auto-Fill: {debugOtp})</span>
+                {isMr ? "बदला" : "Change"}
               </button>
             </div>
-          )}
 
-          <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              {t("auth.otp_code")} *
-            </label>
-            <input
-              type="text"
-              required
-              maxLength={6}
-              value={otpCode}
-              onChange={(e) => setOtpCode(e.target.value)}
-              placeholder="123456"
-              className="w-full text-center tracking-widest text-2xl font-bold py-2.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-            />
-          </div>
+            {/* Dev Mode 1-Tap Auto-fill Button */}
+            {debugOtp && (
+              <div className="p-3 bg-harvest-500/10 border border-harvest-500/30 rounded-xl space-y-2">
+                <div className="text-xs text-soil-900 dark:text-harvest-200 flex items-center justify-between">
+                  <span className="font-medium">
+                    {t("auth.dev_otp_notice")}:{" "}
+                    <strong className="font-mono text-base font-black tracking-widest text-soil-900 dark:text-white">
+                      {debugOtp}
+                    </strong>
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOtpCode(debugOtp)}
+                  className="w-full h-10 rounded-lg bg-soil-700 hover:bg-soil-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-[0.98] transition-all"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-harvest-300" />
+                  <span>{isMr ? `१-टॅप OTP भरा (${debugOtp})` : `1-Tap Auto-Fill (${debugOtp})`}</span>
+                </button>
+              </div>
+            )}
 
-          <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              {t("auth.new_password")} *
-            </label>
-            <div className="relative">
-              <Lock className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
+            <div>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5 text-center">
+                {t("auth.otp_code")} *
+              </label>
               <input
-                type="password"
+                type="text"
                 required
-                minLength={6}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="At least 6 characters"
-                className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                placeholder="123456"
+                className="w-full h-14 text-center tracking-widest text-2xl font-black rounded-xl border-2 border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:border-forest-600 font-mono"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
-              {t("auth.confirm_password")} *
-            </label>
-            <div className="relative">
-              <Lock className="w-5 h-5 text-zinc-400 absolute left-3 top-3.5" />
-              <input
-                type="password"
-                required
-                minLength={6}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter password"
-                className="w-full pl-10 pr-3 py-3 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-kisan-green-600 min-h-[48px]"
-              />
+            <div>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5">
+                {t("auth.new_password")} *
+              </label>
+              <div className="relative">
+                <Lock className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder={isMr ? "किमान ६ अक्षरे" : "At least 6 characters"}
+                  className="w-full h-12 pl-11 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600"
+                />
+              </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-kisan-green-700 hover:bg-kisan-green-800 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all active:scale-98 min-h-[48px]"
-          >
-            <span>{isLoading ? t("common.loading") : t("auth.reset_password")}</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </form>
-      )}
+            <div>
+              <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1.5">
+                {t("auth.confirm_password")} *
+              </label>
+              <div className="relative">
+                <Lock className="w-5 h-5 text-stone-400 absolute left-3.5 top-3.5" />
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder={isMr ? "पासवर्ड पुन्हा टाका" : "Re-enter password"}
+                  className="w-full h-12 pl-11 pr-3.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-900/90 text-stone-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-forest-600"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-13 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-card transition-all"
+            >
+              <span>{isLoading ? t("common.loading") : t("auth.reset_password")}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
 
 export default function ForgotPasswordPage() {
   return (
-    <Suspense fallback={<div className="py-8 text-center text-xs">Loading...</div>}>
+    <Suspense fallback={<div className="py-8 text-center text-xs font-bold text-stone-500">Loading...</div>}>
       <ForgotPasswordContent />
     </Suspense>
   );
