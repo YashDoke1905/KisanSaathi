@@ -26,6 +26,7 @@ import {
   RefreshCw,
   Coins,
   ArrowRight,
+  ArrowLeft,
   Info,
 } from "lucide-react";
 import {
@@ -201,12 +202,30 @@ export default function SchemesPage() {
     : `According to your farm profile, you are eligible for ${summary?.eligibleCount || 0} government schemes, including ₹12,000 yearly direct bank cash and up to ₹2.5 Lakh capital subsidies. Check your Kisan Credit Card loan limit at 4% interest rate.`;
 
   return (
-    <div className="space-y-4 pb-20">
-      {/* Top Header */}
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <h1 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-1.5">
-            <Landmark className="w-5 h-5 text-kisan-green-700 dark:text-kisan-green-400" />
+    <div className="min-h-screen bg-[#FAF8F4] dark:bg-[#121411] text-stone-900 dark:text-stone-100 transition-colors pb-24">
+      <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
+        {/* Navigation Breadcrumb */}
+        <div className="flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 dark:text-stone-400 hover:text-[#1B4332] dark:hover:text-[#52B788] transition-colors py-1 min-h-[36px]"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>{isMr ? "मुख्य डॅशबोर्ड" : isHi ? "होम डैशबोर्ड" : "Home Dashboard"}</span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <ProvenanceBadge type="live" sourceText="MahaDBT 2026" />
+            <AudioReaderButton text={ttsOverviewText} lang={isMr ? "mr" : isHi ? "hi" : "en"} compact />
+          </div>
+        </div>
+
+        {/* Page Title & Subtitle */}
+        <div className="space-y-1">
+          <h1 className="text-xl md:text-2xl font-bold font-heading text-stone-900 dark:text-stone-100 flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-[#1B4332]/10 dark:bg-[#52B788]/20 text-[#1B4332] dark:text-[#52B788] flex items-center justify-center shrink-0">
+              <Landmark className="w-5 h-5" />
+            </div>
             <span>
               {isMr
                 ? "सरकारी योजना व अनुदान केंद्र"
@@ -215,121 +234,114 @@ export default function SchemesPage() {
                   : "Government Schemes & Subsidies"}
             </span>
           </h1>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-stone-600 dark:text-stone-400 pl-11">
             {isMr
               ? "स्वयंचलित पात्रता तपासणी, KCC कर्ज मर्यादा व कागदपत्र पाकीट"
-              : "Automated eligibility scanner, KCC limit calculator & document wallet"}
+              : isHi
+                ? "स्वचालित पात्रता जांच, केसीसी ऋण सीमा व दस्तावेज वॉलेट"
+                : "Automated eligibility scanner, KCC limit calculator & document wallet"}
           </p>
         </div>
-        <div className="flex items-center gap-1">
-          <AudioReaderButton text={ttsOverviewText} lang={isMr ? "mr" : "en"} compact />
-          <ProvenanceBadge type="live" sourceText="MahaDBT 2026" />
-        </div>
-      </div>
 
-      {/* Hero Stats Card */}
-      <div className="bg-gradient-to-br from-kisan-green-800 to-kisan-green-950 text-white rounded-2xl p-4 shadow-lg space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wide uppercase text-kisan-green-200 flex items-center gap-1">
-            <Coins className="w-3.5 h-3.5 text-amber-300" />
-            {isMr ? "आपल्यासाठी उपलब्ध एकूण लाभ" : "Total Unlockable Value"}
-          </span>
+        {/* Hero Stats Card */}
+        <div className="bg-gradient-to-br from-[#1B4332] via-[#24543F] to-[#0F281E] text-white rounded-3xl p-5 shadow-lg border border-[#2D6A4F]/40 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <Coins className="w-4 h-4 text-amber-300" />
+              {isMr ? "आपल्यासाठी उपलब्ध एकूण लाभ" : isHi ? "कुल उपलब्ध लाभ" : "Total Unlockable Value"}
+            </span>
+            <button
+              onClick={() => setIsSimulatorOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-white/15 hover:bg-white/25 rounded-xl backdrop-blur-md border border-white/20 transition-all min-h-[36px]"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-amber-300" />
+              <span>{isMr ? "पात्रता सिम्युलेटर" : isHi ? "प्रोफाइल बदलें" : "Simulate Profile"}</span>
+            </button>
+          </div>
+
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl md:text-4xl font-black font-mono tracking-tight text-white tabular-nums">
+              ₹{(summary?.totalUnlockableBenefit || 320000).toLocaleString("en-IN")}+
+            </span>
+            <span className="text-xs text-stone-200">
+              {isMr ? "अनुदान व आर्थिक लाभ" : isHi ? "अनुदान व वित्तीय लाभ" : "potential benefits"}
+            </span>
+          </div>
+
+          {/* Counters grid */}
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/15">
+            <div className="bg-white/10 rounded-2xl p-2.5 text-center backdrop-blur-xs border border-white/10">
+              <div className="text-xl font-black font-mono text-emerald-300 tabular-nums">
+                {summary?.eligibleCount ?? 8}
+              </div>
+              <div className="text-[11px] font-medium text-emerald-100 flex items-center justify-center gap-1 mt-0.5">
+                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                <span>{isMr ? "पात्र" : isHi ? "पात्र" : "Eligible"}</span>
+              </div>
+            </div>
+
+            <div className="bg-white/10 rounded-2xl p-2.5 text-center backdrop-blur-xs border border-white/10">
+              <div className="text-xl font-black font-mono text-amber-300 tabular-nums">
+                {summary?.conditionalCount ?? 10}
+              </div>
+              <div className="text-[11px] font-medium text-amber-100 flex items-center justify-center gap-1 mt-0.5">
+                <AlertCircle className="w-3 h-3 text-amber-300" />
+                <span>{isMr ? "अटींवर पात्र" : isHi ? "सशर्त" : "Conditional"}</span>
+              </div>
+            </div>
+
+            <div className="bg-white/10 rounded-2xl p-2.5 text-center backdrop-blur-xs border border-white/10">
+              <div className="text-xl font-black font-mono text-sky-200 tabular-nums">
+                ₹{(summary?.directCashBenefitYearly || 12000).toLocaleString("en-IN")}
+              </div>
+              <div className="text-[11px] font-medium text-sky-100 mt-0.5">
+                {isMr ? "वार्षिक थेट रोख" : isHi ? "वार्षिक नकद" : "Annual Cash"}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Tabs Navigation */}
+        <div className="grid grid-cols-3 gap-1.5 bg-stone-200/70 dark:bg-stone-900/80 p-1.5 rounded-2xl">
           <button
-            onClick={() => setIsSimulatorOpen(true)}
-            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold bg-white/15 hover:bg-white/25 rounded-full backdrop-blur-sm border border-white/20 transition-colors"
+            onClick={() => setActiveTab("schemes")}
+            className={`py-2.5 px-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 min-h-[44px] ${
+              activeTab === "schemes"
+                ? "bg-white dark:bg-[#1E221B] text-[#1B4332] dark:text-[#52B788] shadow-sm font-extrabold"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+            }`}
           >
-            <SlidersHorizontal className="w-3 h-3 text-amber-300" />
-            <span>{isMr ? "पात्रता बदला / तपासा" : "Simulate Profile"}</span>
+            <Landmark className="w-4 h-4" />
+            <span>{isMr ? "योजना यादी" : isHi ? "योजना सूची" : "Schemes"}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("kcc")}
+            className={`py-2.5 px-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 min-h-[44px] ${
+              activeTab === "kcc"
+                ? "bg-white dark:bg-[#1E221B] text-[#1B4332] dark:text-[#52B788] shadow-sm font-extrabold"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+            }`}
+          >
+            <Calculator className="w-4 h-4" />
+            <span>{isMr ? "KCC कर्ज (४%)" : isHi ? "केसीसी ऋण (4%)" : "KCC Loan"}</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("wallet")}
+            className={`py-2.5 px-2 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 min-h-[44px] ${
+              activeTab === "wallet"
+                ? "bg-white dark:bg-[#1E221B] text-[#1B4332] dark:text-[#52B788] shadow-sm font-extrabold"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
+            }`}
+          >
+            <FolderLock className="w-4 h-4" />
+            <span>{isMr ? "दस्तावेज" : isHi ? "वॉलेट" : "Wallet"}</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-emerald-600 text-white font-mono font-bold rounded-full ml-0.5">
+              {walletReadinessPercent}%
+            </span>
           </button>
         </div>
-
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-black tracking-tight text-white">
-            ₹
-            {(
-              (summary?.totalUnlockableBenefit || 320000)
-            ).toLocaleString("en-IN")}
-            +
-          </span>
-          <span className="text-xs text-kisan-green-200">
-            {isMr ? "अनुदान व आर्थिक लाभ" : "potential benefits"}
-          </span>
-        </div>
-
-        {/* Counters grid */}
-        <div className="grid grid-cols-3 gap-2 pt-1 border-t border-kisan-green-700/60">
-          <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
-            <div className="text-lg font-black text-emerald-300">
-              {summary?.eligibleCount ?? 8}
-            </div>
-            <div className="text-[11px] font-medium text-emerald-100 flex items-center justify-center gap-0.5">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-              <span>{isMr ? "पात्र" : "Eligible"}</span>
-            </div>
-          </div>
-
-          <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
-            <div className="text-lg font-black text-amber-300">
-              {summary?.conditionalCount ?? 10}
-            </div>
-            <div className="text-[11px] font-medium text-amber-100 flex items-center justify-center gap-0.5">
-              <AlertCircle className="w-3 h-3 text-amber-300" />
-              <span>{isMr ? "अटींवर पात्र" : "Conditional"}</span>
-            </div>
-          </div>
-
-          <div className="bg-white/10 rounded-xl p-2 text-center backdrop-blur-sm">
-            <div className="text-lg font-black text-sky-200">
-              ₹{(summary?.directCashBenefitYearly || 12000).toLocaleString("en-IN")}
-            </div>
-            <div className="text-[11px] font-medium text-sky-100">
-              {isMr ? "वार्षिक थेट रोख" : "Annual Cash"}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Tabs Navigation */}
-      <div className="grid grid-cols-3 gap-1 bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl">
-        <button
-          onClick={() => setActiveTab("schemes")}
-          className={`py-2 px-1 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
-            activeTab === "schemes"
-              ? "bg-white dark:bg-zinc-700 text-kisan-green-800 dark:text-kisan-green-300 shadow-sm"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-          }`}
-        >
-          <Landmark className="w-3.5 h-3.5" />
-          <span>{isMr ? "योजना यादी" : "Schemes"}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("kcc")}
-          className={`py-2 px-1 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
-            activeTab === "kcc"
-              ? "bg-white dark:bg-zinc-700 text-kisan-green-800 dark:text-kisan-green-300 shadow-sm"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-          }`}
-        >
-          <Calculator className="w-3.5 h-3.5" />
-          <span>{isMr ? "KCC कर्ज (४%)" : "KCC Loan"}</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab("wallet")}
-          className={`py-2 px-1 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1 ${
-            activeTab === "wallet"
-              ? "bg-white dark:bg-zinc-700 text-kisan-green-800 dark:text-kisan-green-300 shadow-sm"
-              : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-          }`}
-        >
-          <FolderLock className="w-3.5 h-3.5" />
-          <span>{isMr ? "कागदपत्र पाकीट" : "Wallet"}</span>
-          <span className="text-[10px] px-1.5 py-0.2 bg-emerald-500 text-white rounded-full">
-            {walletReadinessPercent}%
-          </span>
-        </button>
-      </div>
 
       {/* TAB 1: SCHEMES LIST & CATEGORIES */}
       {activeTab === "schemes" && (
@@ -1147,12 +1159,16 @@ export default function SchemesPage() {
       )}
 
       {/* Return to Dashboard */}
-      <Link
-        href="/"
-        className="block text-center text-xs font-bold text-kisan-green-700 dark:text-kisan-green-400 hover:underline py-3 min-h-[44px]"
-      >
-        ← {isMr ? "मुख्य डॅशबोर्डवर परत जा" : "Return to Home Dashboard"}
-      </Link>
+      <div className="pt-2">
+        <Link
+          href="/"
+          className="w-full inline-flex items-center justify-center gap-2 text-xs font-bold text-[#1B4332] dark:text-[#52B788] bg-white dark:bg-[#1E221B] border border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800 py-3 rounded-2xl min-h-[48px] transition-colors shadow-xs"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>{isMr ? "मुख्य डॅशबोर्डवर परत जा" : isHi ? "मुख्य डैशबोर्ड पर वापस जाएं" : "Return to Home Dashboard"}</span>
+        </Link>
+      </div>
     </div>
-  );
+  </div>
+);
 }
