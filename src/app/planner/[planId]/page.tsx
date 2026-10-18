@@ -12,11 +12,30 @@ import { PlannerOutput } from "@/engine/types";
 import { IrrigationWaterEstimate } from "@/engine/irrigation";
 import { CropMasterData } from "@/data/crops";
 import { playChime, speakWithFallback } from "@/lib/soundUtils";
+import {
+  Sprout,
+  Volume2,
+  Calendar,
+  Droplets,
+  TrendingUp,
+  Calculator,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  Sparkles,
+  Edit3,
+  Check,
+  Zap,
+  DollarSign,
+  ChevronRight,
+  ShieldAlert,
+} from "lucide-react";
 
 export default function PlanDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { t, language } = useLanguage();
+  const isMr = language === "mr";
 
   const planId = params?.planId as string;
 
@@ -89,11 +108,10 @@ export default function PlanDetailPage() {
   const handleReadSummary = () => {
     if (!calc || !cropData) return;
     playChime();
-    const cropName = language === "en" ? cropData.nameEn : cropData.nameMr;
-    const summaryText =
-      language === "en"
-        ? `${cropName} crop plan on ${plan.areaAcre} acres. Estimated total cost is ${calc.totalCost} rupees. Expected harvest yield is ${calc.totalExpectedYieldQuintals} quintals. Net profit forecast is ${calc.netProfit} rupees with ${calc.roiPercent}% return on investment.`
-        : `${cropName} पीक नियोजन. एकूण क्षेत्र ${plan.areaAcre} एकर. अंदाजित उत्पादन खर्च ${calc.totalCost} रुपये. अपेक्षित एकूण उत्पादन ${calc.totalExpectedYieldQuintals} क्विंटल. अपेक्षित निव्वळ नफा ${calc.netProfit} रुपये असून नफा परतावा दर ${calc.roiPercent}% आहे.`;
+    const cropName = isMr ? cropData.nameMr : cropData.nameEn;
+    const summaryText = isMr
+      ? `${cropName} पीक नियोजन. एकूण क्षेत्र ${plan.areaAcre} एकर. अंदाजित उत्पादन खर्च ${calc.totalCost} रुपये. अपेक्षित एकूण उत्पादन ${calc.totalExpectedYieldQuintals} क्विंटल. अपेक्षित निव्वळ नफा ${calc.netProfit} रुपये असून नफा परतावा दर ${calc.roiPercent}% आहे.`
+      : `${cropName} crop plan on ${plan.areaAcre} acres. Estimated total cost is ${calc.totalCost} rupees. Expected harvest yield is ${calc.totalExpectedYieldQuintals} quintals. Net profit forecast is ${calc.netProfit} rupees with ${calc.roiPercent}% return on investment.`;
 
     speakWithFallback(summaryText, language);
   };
@@ -119,108 +137,108 @@ export default function PlanDetailPage() {
 
       <main className="mx-auto w-full max-w-lg flex-1 px-3 py-4 space-y-4">
         {/* Top Header Card */}
-        <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
+        <div className="card-warm p-4.5 space-y-3.5">
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-lg font-extrabold text-stone-900 dark:text-white leading-tight">
-                  {language === "en" ? cropData.nameEn : cropData.nameMr}
+                <h1 className="text-xl font-black text-stone-900 dark:text-stone-100 leading-tight">
+                  {isMr ? cropData.nameMr : cropData.nameEn}
                 </h1>
-                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
-                  {plan.status === "active" ? (language === "en" ? "Active" : "चालू") : plan.status}
+                <span className="rounded-full bg-forest-100 dark:bg-forest-950/60 px-2.5 py-0.5 text-[10px] font-bold text-forest-800 dark:text-forest-300 uppercase">
+                  {plan.status === "active" ? (isMr ? "चालू" : "Active") : plan.status}
                 </span>
               </div>
-              <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+              <p className="text-xs text-stone-500 font-medium mt-0.5">
                 {plan.farm.name} • {calc.areaAcre} एकर ({calc.areaGuntha} गुंठे) • {calc.varietyName}
               </p>
             </div>
 
             <button
               onClick={handleReadSummary}
-              className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-900/60 dark:text-emerald-300 active:scale-95 shadow-sm"
+              className="w-10 h-10 rounded-xl bg-forest-50 dark:bg-forest-950/60 text-forest-800 dark:text-forest-300 flex items-center justify-center hover:bg-forest-100 transition-colors shadow-xs active:scale-95"
               aria-label="Read Summary"
               title="Read Summary"
             >
-              🔊
+              <Volume2 className="w-5 h-5" />
             </button>
           </div>
 
           {/* Dates Bar */}
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-stone-50 p-2.5 text-xs text-stone-700 dark:bg-stone-850 dark:text-stone-300 border border-stone-100 dark:border-stone-800">
+          <div className="grid grid-cols-3 gap-2 rounded-xl bg-stone-50 dark:bg-stone-850 p-2.5 text-center text-xs text-stone-700 dark:text-stone-300 border border-stone-100 dark:border-stone-800 font-medium">
             <div>
-              <span className="text-[10px] text-stone-500 dark:text-stone-400 block">पेरणी तारीख:</span>
-              <span className="font-bold">{calc.sowingDate}</span>
+              <span className="text-[10px] text-stone-500 block font-medium">{isMr ? "पेरणी तारीख:" : "Sowing:"}</span>
+              <span className="font-bold text-stone-800 dark:text-stone-200">{calc.sowingDate}</span>
             </div>
             <div>
-              <span className="text-[10px] text-stone-500 dark:text-stone-400 block">कालावधी:</span>
-              <span className="font-bold">{calc.durationDays} दिवस</span>
+              <span className="text-[10px] text-stone-500 block font-medium">{isMr ? "कालावधी:" : "Duration:"}</span>
+              <span className="font-bold text-stone-800 dark:text-stone-200">{calc.durationDays} {isMr ? "दिवस" : "days"}</span>
             </div>
             <div>
-              <span className="text-[10px] text-stone-500 dark:text-stone-400 block">काढणी तारीख:</span>
-              <span className="font-bold text-emerald-700 dark:text-emerald-400">{calc.harvestDate}</span>
+              <span className="text-[10px] text-stone-500 block font-medium">{isMr ? "काढणी तारीख:" : "Harvest:"}</span>
+              <span className="font-black text-forest-800 dark:text-forest-300 font-mono">{calc.harvestDate}</span>
             </div>
           </div>
         </div>
 
         {/* 4 Financial Highlight KPI Cards */}
         <div className="grid grid-cols-2 gap-2.5">
-          <div className="rounded-2xl bg-white p-3.5 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
-                {language === "en" ? "Net Profit:" : "अपेक्षित निव्वळ नफा:"}
+          <div className="card-warm p-3.5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-stone-500 font-medium">
+                {isMr ? "अपेक्षित निव्वळ नफा" : "Net Profit"}
               </span>
               <ProvenanceBadge type="estimate" />
             </div>
-            <p className="text-base font-extrabold text-emerald-700 dark:text-emerald-400">
+            <p className="text-lg font-black text-forest-800 dark:text-forest-300 font-mono money-numeral">
               ₹{calc.netProfit.toLocaleString("en-IN")}
             </p>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
-              ROI: <span className="font-bold text-emerald-600">{calc.roiPercent}%</span> (₹{calc.profitPerAcre.toLocaleString("en-IN")}/एकर)
+            <p className="text-[10px] text-stone-500 font-medium">
+              ROI: <span className="font-bold text-forest-700 dark:text-forest-400 font-mono">{calc.roiPercent}%</span> (₹{calc.profitPerAcre.toLocaleString("en-IN")}/ac)
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-3.5 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
-                {language === "en" ? "Total Cultivation Cost:" : "एकूण उत्पादन खर्च:"}
+          <div className="card-warm p-3.5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-stone-500 font-medium">
+                {isMr ? "एकूण उत्पादन खर्च" : "Total Cost"}
               </span>
               <ProvenanceBadge type="estimate" />
             </div>
-            <p className="text-base font-extrabold text-stone-900 dark:text-white">
+            <p className="text-lg font-black text-stone-900 dark:text-white font-mono money-numeral">
               ₹{calc.totalCost.toLocaleString("en-IN")}
             </p>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
-              ₹{calc.costPerAcre.toLocaleString("en-IN")}/एकर (१२ घटक)
+            <p className="text-[10px] text-stone-500 font-medium font-mono">
+              ₹{calc.costPerAcre.toLocaleString("en-IN")}/ac (12 {isMr ? "घटक" : "items"})
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-3.5 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
-                {language === "en" ? "Expected Yield:" : "अपेक्षित एकूण उत्पादन:"}
+          <div className="card-warm p-3.5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-stone-500 font-medium">
+                {isMr ? "अपेक्षित एकूण उत्पादन" : "Expected Yield"}
               </span>
               <ProvenanceBadge type="estimate" />
             </div>
-            <p className="text-base font-extrabold text-stone-900 dark:text-white">
-              {calc.totalExpectedYieldQuintals} <span className="text-xs font-normal">क्विंटल</span>
+            <p className="text-lg font-black text-stone-900 dark:text-white font-mono">
+              {calc.totalExpectedYieldQuintals} <span className="text-xs font-normal">Q</span>
             </p>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
-              {calc.effectiveYieldPerAcre} Q/एकर (गुणांक {calc.multipliers.combinedFactor}×)
+            <p className="text-[10px] text-stone-500 font-medium font-mono">
+              {calc.effectiveYieldPerAcre} Q/ac ({calc.multipliers.combinedFactor}× factor)
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-3.5 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
-                {language === "en" ? "Break-Even Price:" : "तोटा न होणारा किमान भाव:"}
+          <div className="card-warm p-3.5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-stone-500 font-medium">
+                {isMr ? "किमान आधार भाव" : "Break-Even Price"}
               </span>
               <ProvenanceBadge type="estimate" />
             </div>
-            <p className="text-base font-extrabold text-amber-700 dark:text-amber-400">
+            <p className="text-lg font-black text-harvest-600 dark:text-harvest-400 font-mono money-numeral">
               ₹{calc.breakEvenPricePerQuintal.toLocaleString("en-IN")}
             </p>
-            <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
-              प्रति क्विंटल किमान विक्री भाव
+            <p className="text-[10px] text-stone-500 font-medium">
+              {isMr ? "प्रति क्विंटल किमान विक्री" : "min per quintal"}
             </p>
           </div>
         </div>
@@ -228,91 +246,92 @@ export default function PlanDetailPage() {
         {/* Show Math Transparency Button */}
         <button
           onClick={() => setShowCalcModal(true)}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-emerald-50 py-3 text-xs font-bold text-emerald-800 border border-emerald-250 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:border-emerald-900/60 dark:text-emerald-300 active:scale-95 transition-all shadow-sm min-h-[48px]"
+          className="w-full h-12 rounded-xl bg-forest-50 dark:bg-forest-950/40 border border-forest-200 dark:border-forest-800 text-forest-800 dark:text-forest-300 font-bold text-xs flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all"
         >
-          <span>🧮</span>
-          <span>{language === "en" ? "How was this calculated? (View Math & Sources)" : "हिशोब कसा केला? (पारदर्शक सूत्रे व आधार पहा)"}</span>
+          <Calculator className="w-4 h-4 text-forest-700" />
+          <span>{isMr ? "हिशोब कसा केला? (पारदर्शक सूत्रे व आधार पहा)" : "How was this calculated? (View Formulae & Sources)"}</span>
         </button>
 
         {/* Navigation Tabs */}
-        <div className="flex rounded-xl bg-stone-200 p-1 dark:bg-stone-800 text-xs font-bold">
+        <div className="grid grid-cols-3 bg-stone-100 dark:bg-stone-850 p-1 rounded-2xl border border-stone-200/60 dark:border-stone-800">
           <button
             onClick={() => setActiveTab("stages")}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            className={`h-10 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "stages"
-                ? "bg-white text-stone-900 shadow-sm dark:bg-stone-900 dark:text-white"
-                : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                ? "bg-white dark:bg-stone-900 text-forest-800 dark:text-forest-300 shadow-sm"
+                : "text-stone-600 dark:text-stone-400"
             }`}
           >
-            🌱 {language === "en" ? "Stages & Tasks" : "टप्पे व कामे"}
+            <Sprout className="w-3.5 h-3.5" />
+            <span>{isMr ? "टप्पे व कामे" : "Stages"}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("water")}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            className={`h-10 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "water"
-                ? "bg-white text-stone-900 shadow-sm dark:bg-stone-900 dark:text-white"
-                : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                ? "bg-white dark:bg-stone-900 text-forest-800 dark:text-forest-300 shadow-sm"
+                : "text-stone-600 dark:text-stone-400"
             }`}
           >
-            💧 {language === "en" ? "Water & Pump" : "पाणी व सिंचन"}
+            <Droplets className="w-3.5 h-3.5" />
+            <span>{isMr ? "पाणी व पंप" : "Water"}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("financials")}
-            className={`flex-1 py-2 rounded-lg transition-all ${
+            className={`h-10 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               activeTab === "financials"
-                ? "bg-white text-stone-900 shadow-sm dark:bg-stone-900 dark:text-white"
-                : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                ? "bg-white dark:bg-stone-900 text-forest-800 dark:text-forest-300 shadow-sm"
+                : "text-stone-600 dark:text-stone-400"
             }`}
           >
-            📊 {language === "en" ? "Scenarios & Cost" : "आर्थिक विश्लेषण"}
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>{isMr ? "आर्थिक हिशोब" : "Financials"}</span>
           </button>
         </div>
 
         {/* ================= TAB 1: GROWTH STAGES & TASKS ================= */}
         {activeTab === "stages" && (
           <div className="space-y-4 animate-fade-in">
-            {/* Growth Stages Timeline Cards */}
             {cropData.stages.map((stg) => {
-              const stageTasks = tasks.filter((t) => t.category && t.dueDate);
-
               return (
                 <div
                   key={stg.stageNumber}
-                  className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 space-y-3"
+                  className="card-warm p-4 space-y-3"
                 >
                   {/* Stage Header */}
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-2 dark:border-stone-800">
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-700 text-white text-xs font-bold">
+                  <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-7 h-7 rounded-full bg-forest-800 text-white text-xs font-black flex items-center justify-center shrink-0">
                         {stg.stageNumber}
                       </span>
                       <div>
-                        <h3 className="text-sm font-bold text-stone-900 dark:text-white">
-                          {language === "en" ? stg.nameEn : stg.nameMr}
+                        <h3 className="text-sm font-extrabold text-stone-900 dark:text-white">
+                          {isMr ? stg.nameMr : stg.nameEn}
                         </h3>
-                        <p className="text-[11px] text-stone-500 dark:text-stone-400">
-                          दिवस {stg.startDay} ते {stg.endDay} (Kc: {stg.kcFactor})
+                        <p className="text-[11px] text-stone-500 font-medium">
+                          {isMr ? `दिवस ${stg.startDay} ते ${stg.endDay}` : `Days ${stg.startDay} to ${stg.endDay}`} (Kc: {stg.kcFactor})
                         </p>
                       </div>
                     </div>
-                    <span className="text-[11px] font-semibold text-stone-600 dark:text-stone-400">
-                      मजूर: {Math.round(stg.labourDaysPerAcre * calc.areaAcre)} दिवस
+                    <span className="text-[11px] font-bold text-stone-600 dark:text-stone-400">
+                      {isMr ? "मजूर: " : "Labour: "}
+                      <span className="font-mono">{Math.round(stg.labourDaysPerAcre * calc.areaAcre)}</span> {isMr ? "दिवस" : "days"}
                     </span>
                   </div>
 
                   {/* Fertilizer Dose Schedule */}
                   {(stg.fertilizerDose.ureaKg > 0 || stg.fertilizerDose.dapKg > 0 || stg.fertilizerDose.mopKg > 0) && (
-                    <div className="rounded-xl bg-emerald-50/80 p-3 text-xs border border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-900/50">
-                      <p className="font-bold text-emerald-900 dark:text-emerald-200 flex items-center gap-1 mb-1">
-                        <span>🧪</span>
-                        {language === "en" ? "Fertilizer Schedule (Per Acre):" : "खत नियोजन (प्रति एकर):"}
+                    <div className="rounded-xl bg-forest-50/80 dark:bg-forest-950/30 p-3 text-xs border border-forest-200/80 dark:border-forest-900/60 space-y-1.5">
+                      <p className="font-bold text-forest-900 dark:text-forest-200 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-forest-700 dark:text-forest-400" />
+                        <span>{isMr ? "खत नियोजन (प्रति एकर):" : "Fertilizer Schedule (Per Acre):"}</span>
                       </p>
-                      <p className="text-stone-700 dark:text-stone-300 text-[11px]">
+                      <p className="text-stone-700 dark:text-stone-300 text-[11px] font-medium">
                         {stg.fertilizerDose.descriptionMr}
                       </p>
-                      <div className="mt-2 flex gap-3 font-semibold text-[11px] text-emerald-800 dark:text-emerald-300">
+                      <div className="flex gap-3 font-mono font-bold text-[11px] text-forest-800 dark:text-forest-300 pt-0.5">
                         {stg.fertilizerDose.ureaKg > 0 && <span>युरिया: {stg.fertilizerDose.ureaKg} kg</span>}
                         {stg.fertilizerDose.dapKg > 0 && <span>DAP: {stg.fertilizerDose.dapKg} kg</span>}
                         {stg.fertilizerDose.mopKg > 0 && <span>MOP: {stg.fertilizerDose.mopKg} kg</span>}
@@ -322,24 +341,24 @@ export default function PlanDetailPage() {
 
                   {/* Pest Watchlist */}
                   {stg.pestWatch && stg.pestWatch.length > 0 && (
-                    <div className="rounded-xl bg-rose-50/80 p-3 text-xs border border-rose-200 dark:bg-rose-950/30 dark:border-rose-900/50">
-                      <p className="font-bold text-rose-900 dark:text-rose-200 flex items-center gap-1 mb-1.5">
-                        <span>🐛</span>
-                        {language === "en" ? "Pest & Disease Watchlist:" : "कीड व रोग दक्षता सूची:"}
+                    <div className="rounded-xl bg-rose-50/70 dark:bg-rose-950/30 p-3 text-xs border border-rose-200 dark:border-rose-900/50 space-y-2">
+                      <p className="font-bold text-rose-900 dark:text-rose-200 flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+                        <span>{isMr ? "कीड व रोग दक्षता सूची:" : "Pest & Disease Watchlist:"}</span>
                       </p>
                       {stg.pestWatch.map((pw, idx) => (
-                        <div key={idx} className="space-y-1 mb-2 text-[11px] last:mb-0">
+                        <div key={idx} className="space-y-1 text-[11px]">
                           <p className="font-bold text-rose-800 dark:text-rose-300">
                             • {pw.pestNameMr} ({pw.pestNameEn})
                           </p>
-                          <p className="text-stone-700 dark:text-stone-300">
-                            <span className="font-semibold">लक्षणे:</span> {pw.symptomsMr}
+                          <p className="text-stone-700 dark:text-stone-300 font-medium">
+                            <span className="font-bold">{isMr ? "लक्षणे:" : "Symptoms:"}</span> {pw.symptomsMr}
                           </p>
-                          <p className="text-emerald-700 dark:text-emerald-400">
-                            <span className="font-semibold">सेंद्रिय उपाय:</span> {pw.organicControlMr}
+                          <p className="text-forest-800 dark:text-forest-300 font-medium">
+                            <span className="font-bold">{isMr ? "सेंद्रिय उपाय:" : "Organic:"}</span> {pw.organicControlMr}
                           </p>
-                          <p className="text-stone-600 dark:text-stone-400">
-                            <span className="font-semibold">रासायनिक उपाय:</span> {pw.chemicalControlMr}
+                          <p className="text-stone-600 dark:text-stone-400 font-medium">
+                            <span className="font-bold">{isMr ? "रासायनिक उपाय:" : "Chemical:"}</span> {pw.chemicalControlMr}
                           </p>
                         </div>
                       ))}
@@ -347,9 +366,9 @@ export default function PlanDetailPage() {
                   )}
 
                   {/* Tasks for this stage */}
-                  <div className="space-y-1.5 pt-1">
+                  <div className="space-y-2 pt-1">
                     <p className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">
-                      {language === "en" ? "Scheduled Tasks:" : "नियोजित कामे:"}
+                      {isMr ? "नियोजित कृषी कामे:" : "Scheduled Tasks:"}
                     </p>
                     {tasks
                       .filter((t) => {
@@ -362,24 +381,25 @@ export default function PlanDetailPage() {
                         <div
                           key={task.id}
                           onClick={() => handleToggleTask(task.id, task.isCompleted)}
-                          className={`flex items-start gap-2.5 p-2.5 rounded-xl border cursor-pointer transition-all ${
+                          className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
                             task.isCompleted
-                              ? "bg-stone-100 border-stone-200 text-stone-400 line-through dark:bg-stone-850 dark:border-stone-800"
-                              : "bg-stone-50 border-stone-200 text-stone-900 hover:border-emerald-500 dark:bg-stone-800 dark:border-stone-700 dark:text-white"
+                              ? "bg-stone-50 border-stone-200 text-stone-400 line-through dark:bg-stone-850 dark:border-stone-800"
+                              : "card-warm text-stone-900 hover:border-forest-600 dark:text-white"
                           }`}
                         >
                           <input
                             type="checkbox"
                             checked={task.isCompleted}
                             onChange={() => {}}
-                            className="mt-0.5 h-4 w-4 rounded text-emerald-600 focus:ring-emerald-500"
+                            className="mt-0.5 h-4 w-4 rounded accent-forest-700 focus:ring-forest-600"
                           />
                           <div className="flex-1 text-xs">
-                            <p className="font-semibold leading-tight">
-                              {language === "en" ? task.titleEn : task.titleMr}
+                            <p className="font-bold leading-tight">
+                              {isMr ? task.titleMr : task.titleEn}
                             </p>
-                            <p className="text-[10px] text-stone-500 dark:text-stone-400 mt-0.5">
-                              तारीख: {new Date(task.dueDate).toLocaleDateString("en-IN", {
+                            <p className="text-[10px] text-stone-500 font-medium mt-0.5">
+                              {isMr ? "तारीख: " : "Date: "}
+                              {new Date(task.dueDate).toLocaleDateString("en-IN", {
                                 day: "numeric",
                                 month: "short",
                               })}
@@ -397,58 +417,66 @@ export default function PlanDetailPage() {
         {/* ================= TAB 2: WATER & IRRIGATION ================= */}
         {activeTab === "water" && irrigation && (
           <div className="space-y-4 animate-fade-in">
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 space-y-3">
-              <div className="flex items-center justify-between border-b border-stone-100 pb-2 dark:border-stone-800">
+            <div className="card-warm p-4.5 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2.5">
                 <h3 className="text-sm font-bold text-stone-900 dark:text-white flex items-center gap-2">
-                  <span>💧</span>
-                  {language === "en" ? "Farm Water Requirement & Advisory" : "पाणी व सिंचन सल्ला"}
+                  <Droplets className="w-4 h-4 text-forest-700 dark:text-forest-400" />
+                  <span>{isMr ? "पाणी व सिंचन सल्ला" : "Water Requirement & Advisory"}</span>
                 </h3>
                 <ProvenanceBadge type="estimate" />
               </div>
 
-              <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
-                {language === "en" ? irrigation.summaryEn : irrigation.summaryMr}
+              <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed font-medium">
+                {isMr ? irrigation.summaryMr : irrigation.summaryEn}
               </p>
 
               {/* Water Metrics Grid */}
-              <div className="grid grid-cols-2 gap-2.5 pt-2">
-                <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block">एकूण पाण्याची गरज:</span>
-                  <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                    {irrigation.totalLitresFarm.toLocaleString("en-IN")} लिटर
+              <div className="grid grid-cols-2 gap-2.5 pt-1">
+                <div className="rounded-xl bg-stone-50 dark:bg-stone-850 p-3 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                  <span className="text-[10px] text-stone-500 font-medium block">
+                    {isMr ? "एकूण पाण्याची गरज:" : "Total Water Volume:"}
                   </span>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
+                  <span className="text-sm font-black text-forest-800 dark:text-forest-300 font-mono">
+                    {irrigation.totalLitresFarm.toLocaleString("en-IN")} L
+                  </span>
+                  <span className="text-[10px] text-stone-400 block font-mono">
                     ({irrigation.waterReqMm} mm depth)
                   </span>
                 </div>
 
-                <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block">५ HP पंप रनटाईम:</span>
-                  <span className="text-sm font-bold text-stone-900 dark:text-white">
-                    {irrigation.totalPumpHours} तास
+                <div className="rounded-xl bg-stone-50 dark:bg-stone-850 p-3 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                  <span className="text-[10px] text-stone-500 font-medium block">
+                    {isMr ? "५ HP पंप रनटाईम:" : "5 HP Pump Runtime:"}
                   </span>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
-                    (दर आठवड्याला ~{irrigation.weeklyPumpHoursAverage} तास)
+                  <span className="text-sm font-black text-stone-900 dark:text-white font-mono">
+                    {irrigation.totalPumpHours} {isMr ? "तास" : "hrs"}
+                  </span>
+                  <span className="text-[10px] text-stone-400 block font-mono">
+                    (~{irrigation.weeklyPumpHoursAverage} hrs/week)
                   </span>
                 </div>
 
-                <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block">अंदाजित वीज खर्च:</span>
-                  <span className="text-sm font-bold text-stone-900 dark:text-white">
+                <div className="rounded-xl bg-stone-50 dark:bg-stone-850 p-3 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                  <span className="text-[10px] text-stone-500 font-medium block">
+                    {isMr ? "अंदाजित वीज खर्च:" : "Est. Energy Cost:"}
+                  </span>
+                  <span className="text-sm font-black text-stone-900 dark:text-white font-mono money-numeral">
                     ₹{irrigation.estimatedCostElectricityRupees.toLocaleString("en-IN")}
                   </span>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
-                    ({irrigation.estimatedEnergyKwh} kWh युनिट्स)
+                  <span className="text-[10px] text-stone-400 block font-mono">
+                    ({irrigation.estimatedEnergyKwh} kWh)
                   </span>
                 </div>
 
-                <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                  <span className="text-[10px] text-stone-500 dark:text-stone-400 block">पाटपाण्याच्या तुलनेत बचत:</span>
-                  <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-                    {irrigation.waterSavingPercent}% पाणी बचत
+                <div className="rounded-xl bg-stone-50 dark:bg-stone-850 p-3 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                  <span className="text-[10px] text-stone-500 font-medium block">
+                    {isMr ? "पाटपाण्याच्या तुलनेत बचत:" : "Water Savings vs Flood:"}
                   </span>
-                  <span className="text-[10px] text-stone-500 block mt-0.5">
-                    ({(irrigation.waterSavingVsFloodLitres / 1000).toFixed(0)} हजार लिटर)
+                  <span className="text-sm font-black text-forest-800 dark:text-forest-300 font-mono">
+                    {irrigation.waterSavingPercent}% {isMr ? "बचत" : "saved"}
+                  </span>
+                  <span className="text-[10px] text-stone-400 block font-mono">
+                    ({(irrigation.waterSavingVsFloodLitres / 1000).toFixed(0)}k L)
                   </span>
                 </div>
               </div>
@@ -460,49 +488,49 @@ export default function PlanDetailPage() {
         {activeTab === "financials" && (
           <div className="space-y-4 animate-fade-in">
             {/* 3 Scenario Switcher Cards */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-2.5">
-                {language === "en" ? "3 Future Market Scenarios" : "३ संभाव्य बाजार परिस्थिती (जोखीम पडताळणी)"}
+            <div className="card-warm p-4.5 space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">
+                {isMr ? "३ संभाव्य बाजार परिस्थिती (जोखीम पडताळणी)" : "3 Market Scenarios (Risk Analysis)"}
               </h3>
 
-              <div className="grid grid-cols-3 gap-2 mb-3">
+              <div className="grid grid-cols-3 gap-2">
                 {[
-                  { id: "pessimistic", name: "प्रतिकूल", sub: "-20%/-15%", color: "rose" },
-                  { id: "expected", name: "अपेक्षित", sub: "पायाभूत", color: "emerald" },
-                  { id: "optimistic", name: "अनुकूल", sub: "+15%/+15%", color: "amber" },
+                  { id: "pessimistic", name: isMr ? "प्रतिकूल" : "Pessimistic", sub: "-20%/-15%" },
+                  { id: "expected", name: isMr ? "अपेक्षित" : "Expected", sub: "Base Plan" },
+                  { id: "optimistic", name: isMr ? "अनुकूल" : "Optimistic", sub: "+15%/+15%" },
                 ].map((s) => (
                   <button
                     key={s.id}
                     onClick={() => setSelectedScenario(s.id as any)}
                     className={`rounded-xl p-2.5 text-center border transition-all ${
                       selectedScenario === s.id
-                        ? "border-emerald-600 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:border-emerald-500 dark:text-emerald-200 ring-2 ring-emerald-500/20"
-                        : "border-stone-200 bg-stone-50 text-stone-700 hover:bg-stone-100 dark:border-stone-800 dark:bg-stone-850 dark:text-stone-300"
+                        ? "border-forest-700 bg-forest-50/90 text-forest-900 dark:bg-forest-950/40 dark:border-forest-600 dark:text-forest-200 ring-2 ring-forest-600/30"
+                        : "card-warm hover:border-stone-300 dark:hover:border-stone-700 text-stone-700 dark:text-stone-300"
                     }`}
                   >
-                    <p className="text-xs font-bold">{s.name}</p>
-                    <p className="text-[10px] text-stone-500 dark:text-stone-400">{s.sub}</p>
+                    <p className="text-xs font-black">{s.name}</p>
+                    <p className="text-[10px] text-stone-500 font-mono mt-0.5">{s.sub}</p>
                   </button>
                 ))}
               </div>
 
               {/* Active Scenario Details Card */}
-              <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800 space-y-2">
+              <div className="rounded-xl bg-stone-50 dark:bg-stone-850 p-3 text-xs border border-stone-200 dark:border-stone-800 space-y-2 font-medium">
                 <div className="flex justify-between">
-                  <span className="text-stone-600 dark:text-stone-400">अपेक्षित भाव:</span>
-                  <span className="font-bold">₹{activeScenarioData.pricePerQuintal.toLocaleString("en-IN")}/Qtl</span>
+                  <span className="text-stone-600 dark:text-stone-400">{isMr ? "अपेक्षित भाव:" : "Expected Price:"}</span>
+                  <span className="font-bold font-mono">₹{activeScenarioData.pricePerQuintal.toLocaleString("en-IN")}/Qtl</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-600 dark:text-stone-400">अपेक्षित एकूण उत्पादन:</span>
-                  <span className="font-bold">{activeScenarioData.totalYieldQuintals} क्विंटल</span>
+                  <span className="text-stone-600 dark:text-stone-400">{isMr ? "अपेक्षित एकूण उत्पादन:" : "Expected Yield:"}</span>
+                  <span className="font-bold font-mono">{activeScenarioData.totalYieldQuintals} Q</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-stone-600 dark:text-stone-400">एकूण बाजार उत्पन्न:</span>
-                  <span className="font-bold">₹{activeScenarioData.grossRevenue.toLocaleString("en-IN")}</span>
+                  <span className="text-stone-600 dark:text-stone-400">{isMr ? "एकूण बाजार उत्पन्न:" : "Gross Revenue:"}</span>
+                  <span className="font-bold font-mono">₹{activeScenarioData.grossRevenue.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between border-t border-stone-200 pt-1.5 dark:border-stone-750">
-                  <span className="font-bold text-stone-900 dark:text-white">निव्वळ नफा/तोटा:</span>
-                  <span className={`font-extrabold ${activeScenarioData.netProfit >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600"}`}>
+                <div className="flex justify-between border-t border-stone-200 dark:border-stone-750 pt-2">
+                  <span className="font-bold text-stone-900 dark:text-white">{isMr ? "निव्वळ नफा/तोटा:" : "Net Profit/Loss:"}</span>
+                  <span className={`font-black font-mono money-numeral ${activeScenarioData.netProfit >= 0 ? "text-forest-800 dark:text-forest-300" : "text-rose-600"}`}>
                     ₹{activeScenarioData.netProfit.toLocaleString("en-IN")} ({activeScenarioData.roiPercent}% ROI)
                   </span>
                 </div>
@@ -510,22 +538,23 @@ export default function PlanDetailPage() {
             </div>
 
             {/* Editable Cost Table */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-              <div className="flex items-center justify-between mb-3 border-b border-stone-100 pb-2 dark:border-stone-800">
+            <div className="card-warm p-4.5 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2.5">
                 <div>
                   <h3 className="text-sm font-bold text-stone-900 dark:text-white">
-                    {language === "en" ? "Cost Breakdown (12 Line Items)" : "उत्पादन खर्च तपशील (१२ घटक)"}
+                    {isMr ? "उत्पादन खर्च तपशील (१२ घटक)" : "Cost Breakdown (12 Items)"}
                   </h3>
-                  <p className="text-[10px] text-stone-500 dark:text-stone-400">
-                    {language === "en" ? "Every figure can be customized by you" : "प्रत्येक आकडा आपण स्वतः बदलू शकता"}
+                  <p className="text-[10px] text-stone-500 font-medium">
+                    {isMr ? "प्रत्येक आकडा आपण स्वतः बदलू शकता" : "Customize any figure according to your actual expense"}
                   </p>
                 </div>
 
                 <button
                   onClick={() => setIsEditingCosts(!isEditingCosts)}
-                  className="rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-bold text-stone-800 hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-200 active:scale-95"
+                  className="rounded-lg bg-stone-100 dark:bg-stone-800 px-3 py-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 hover:bg-stone-200 transition-colors flex items-center gap-1 active:scale-95"
                 >
-                  {isEditingCosts ? "पूर्ण झाले" : "बदला ✏️"}
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>{isEditingCosts ? (isMr ? "पूर्ण झाले" : "Done") : (isMr ? "बदला" : "Edit")}</span>
                 </button>
               </div>
 
@@ -551,11 +580,11 @@ export default function PlanDetailPage() {
                   return (
                     <div
                       key={item.key}
-                      className="flex items-center justify-between py-1.5 border-b border-stone-100 dark:border-stone-800 last:border-0"
+                      className="flex items-center justify-between py-1.5 border-b border-stone-100 dark:border-stone-850 last:border-0"
                     >
                       <div className="flex items-center gap-1.5">
-                        <span className="text-stone-700 dark:text-stone-300">
-                          {language === "en" ? item.labelEn : item.labelMr}
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">
+                          {isMr ? item.labelMr : item.labelEn}
                         </span>
                         {isUserEntered ? (
                           <ProvenanceBadge type="user" />
@@ -573,10 +602,10 @@ export default function PlanDetailPage() {
                             setEditedCosts((prev) => ({ ...prev, [item.key]: newNum }));
                             setUserCustomCostKeys((prev) => new Set(prev).add(item.key));
                           }}
-                          className="w-24 rounded border border-stone-300 p-1 text-right font-bold text-stone-900 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                          className="w-24 h-8 rounded-lg border border-stone-300 dark:border-stone-700 px-2 text-right font-mono font-bold text-stone-900 dark:bg-stone-800 dark:text-white text-xs"
                         />
                       ) : (
-                        <span className="font-bold text-stone-900 dark:text-white">
+                        <span className="font-bold text-stone-900 dark:text-white font-mono">
                           ₹{val?.toLocaleString("en-IN")}
                         </span>
                       )}
@@ -584,9 +613,9 @@ export default function PlanDetailPage() {
                   );
                 })}
 
-                <div className="pt-2 border-t-2 border-stone-300 dark:border-stone-700 flex justify-between font-extrabold text-sm text-stone-900 dark:text-white">
-                  <span>एकूण उत्पादन खर्च:</span>
-                  <span>
+                <div className="pt-2 border-t-2 border-stone-200 dark:border-stone-700 flex justify-between font-extrabold text-sm text-stone-900 dark:text-white">
+                  <span>{isMr ? "एकूण उत्पादन खर्च:" : "Total Cultivation Cost:"}</span>
+                  <span className="font-mono money-numeral text-forest-800 dark:text-forest-300">
                     ₹
                     {Object.values(editedCosts)
                       .reduce((sum, n) => sum + (Number(n) || 0), 0)
@@ -597,18 +626,18 @@ export default function PlanDetailPage() {
             </div>
 
             {/* 5x5 Sensitivity Matrix */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 overflow-x-auto">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-2">
-                {language === "en" ? "5×5 Sensitivity Matrix (Yield vs Price)" : "५×५ संवेदनशीलता तक्ता (भाव व उत्पादनाचा नफ्यावर परिणाम)"}
+            <div className="card-warm p-4.5 overflow-x-auto space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">
+                {isMr ? "५×५ संवेदनशीलता तक्ता (भाव व उत्पादनाचा नफ्यावर परिणाम)" : "5×5 Sensitivity Matrix (Yield vs Price)"}
               </h3>
-              <p className="text-[10px] text-stone-500 dark:text-stone-400 mb-3">
-                उभे: उत्पादन बदल (-20% ते +20%) | आडवे: बाजारभाव बदल (-20% ते +20%)
+              <p className="text-[10px] text-stone-500 font-medium">
+                {isMr ? "उभे: उत्पादन बदल (-20% ते +20%) | आडवे: बाजारभाव बदल (-20% ते +20%)" : "Vertical: Yield Delta (-20% to +20%) | Horizontal: Price Delta"}
               </p>
 
-              <table className="w-full text-center text-[10px] border-collapse">
+              <table className="w-full text-center text-[10px] border-collapse mt-2 font-mono">
                 <thead>
                   <tr className="border-b border-stone-200 dark:border-stone-750">
-                    <th className="p-1.5 text-stone-500">उतारा \ भाव</th>
+                    <th className="p-1.5 text-stone-500 font-sans">{isMr ? "उतारा \\ भाव" : "Yield \\ Price"}</th>
                     {[-20, -10, 0, 10, 20].map((p) => (
                       <th key={p} className="p-1.5 font-bold text-stone-700 dark:text-stone-300">
                         {p > 0 ? `+${p}%` : `${p}%`}
@@ -621,7 +650,7 @@ export default function PlanDetailPage() {
                     const yDelta = [-20, -10, 0, 10, 20][rIdx];
                     return (
                       <tr key={rIdx} className="border-b border-stone-100 dark:border-stone-850">
-                        <td className="p-1.5 font-bold text-stone-700 dark:text-stone-300">
+                        <td className="p-1.5 font-bold text-stone-700 dark:text-stone-300 font-mono">
                           {yDelta > 0 ? `+${yDelta}%` : `${yDelta}%`}
                         </td>
                         {row.map((cell, cIdx) => (
@@ -630,8 +659,8 @@ export default function PlanDetailPage() {
                             className={`p-1.5 font-bold rounded ${
                               cell.isProfitable
                                 ? cell.yieldDeltaPercent === 0 && cell.priceDeltaPercent === 0
-                                  ? "bg-emerald-600 text-white"
-                                  : "bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+                                  ? "bg-forest-800 text-white"
+                                  : "bg-forest-50 text-forest-800 dark:bg-forest-950/40 dark:text-forest-300"
                                 : "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300"
                             }`}
                           >
@@ -646,28 +675,28 @@ export default function PlanDetailPage() {
             </div>
 
             {/* Monthly Cash Flow Schedule */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-2">
-                {language === "en" ? "Monthly Cash Flow Schedule" : "महिन्यानुसार रोख प्रवाह (कधी खर्च, कधी उत्पन्न)"}
+            <div className="card-warm p-4.5 space-y-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-1">
+                {isMr ? "महिन्यानुसार रोख प्रवाह (कधी खर्च, कधी उत्पन्न)" : "Monthly Cash Flow Roadmap"}
               </h3>
 
               <div className="space-y-2 text-xs">
                 {calc.monthlyCashFlow.map((cf) => (
                   <div
                     key={cf.monthIndex}
-                    className="p-2.5 rounded-xl border border-stone-100 bg-stone-50/70 dark:border-stone-800 dark:bg-stone-850 space-y-1"
+                    className="p-3 rounded-xl border border-stone-100 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-850 space-y-1.5"
                   >
                     <div className="flex justify-between font-bold text-stone-900 dark:text-white">
-                      <span>महिना {cf.monthIndex} ({cf.monthNameMr})</span>
-                      <span className={cf.netCashFlow >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-rose-600"}>
+                      <span>{isMr ? `महिना ${cf.monthIndex} (${cf.monthNameMr})` : `Month ${cf.monthIndex} (${cf.monthNameEn})`}</span>
+                      <span className={`font-mono font-black ${cf.netCashFlow >= 0 ? "text-forest-800 dark:text-forest-300" : "text-rose-600"}`}>
                         {cf.netCashFlow >= 0 ? `+₹${cf.netCashFlow.toLocaleString("en-IN")}` : `-₹${Math.abs(cf.netCashFlow).toLocaleString("en-IN")}`}
                       </span>
                     </div>
-                    <div className="flex justify-between text-[11px] text-stone-600 dark:text-stone-400">
-                      <span>खर्च: ₹{cf.outflowCost.toLocaleString("en-IN")}</span>
-                      <span>उत्पन्न: ₹{cf.inflowRevenue.toLocaleString("en-IN")}</span>
+                    <div className="flex justify-between text-[11px] text-stone-600 dark:text-stone-400 font-mono">
+                      <span>{isMr ? "खर्च:" : "Outflow:"} ₹{cf.outflowCost.toLocaleString("en-IN")}</span>
+                      <span>{isMr ? "उत्पन्न:" : "Inflow:"} ₹{cf.inflowRevenue.toLocaleString("en-IN")}</span>
                     </div>
-                    <p className="text-[10px] text-stone-500 italic">
+                    <p className="text-[10px] text-stone-500 italic font-medium">
                       {cf.activitiesMr.join(" • ")}
                     </p>
                   </div>
@@ -684,7 +713,7 @@ export default function PlanDetailPage() {
         onClose={() => setShowCalcModal(false)}
         steps={calc.transparencySteps}
         language={language}
-        cropName={language === "en" ? cropData.nameEn : cropData.nameMr}
+        cropName={isMr ? cropData.nameMr : cropData.nameEn}
       />
 
       <BottomNav />
