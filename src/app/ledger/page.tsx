@@ -7,6 +7,23 @@ import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { ProvenanceBadge } from "@/components/ProvenanceBadge";
 import { playChime, speakWithFallback } from "@/lib/soundUtils";
+import {
+  BookOpen,
+  TrendingUp,
+  TrendingDown,
+  Wallet,
+  Plus,
+  Trash2,
+  Calendar,
+  Volume2,
+  FileSpreadsheet,
+  CheckCircle2,
+  ArrowRight,
+  Layers,
+  Sparkles,
+  Store,
+  DollarSign,
+} from "lucide-react";
 
 interface LedgerSummary {
   totalExpense: number;
@@ -34,6 +51,8 @@ interface TransactionItem {
 
 export default function LedgerPage() {
   const { t, language } = useLanguage();
+  const isMr = language === "mr";
+  const isHi = language === "hi";
 
   const [activeTab, setActiveTab] = useState<"diary" | "variance">("diary");
   const [loading, setLoading] = useState<boolean>(true);
@@ -156,8 +175,10 @@ export default function LedgerPage() {
         setRatePerQtl("");
         setFeedbackMsg(
           language === "en"
-            ? "✓ Entry successfully saved to Farmer Diary!"
-            : "✓ नोंद वहीखात्यात यशस्वीरित्या जतन झाली!"
+            ? "✓ Entry saved to Khata!"
+            : isHi
+              ? "✓ प्रविष्टि सफलतापूर्वक सहेजी गई!"
+              : "✓ नोंद वहीखात्यात यशस्वीरित्या जतन झाली!"
         );
         setTimeout(() => setFeedbackMsg(""), 4000);
         await loadLedgerData();
@@ -175,7 +196,7 @@ export default function LedgerPage() {
 
   // Delete an entry
   const handleDeleteEntry = async (id: string, type: "expense" | "income") => {
-    if (!confirm(language === "en" ? "Delete this entry?" : "ही नोंद वहीखात्यातून वगळायची आहे का?")) {
+    if (!confirm(language === "en" ? "Delete this entry?" : isHi ? "क्या आप यह प्रविष्टि हटाना चाहते हैं?" : "ही नोंद वहीखात्यातून वगळायची आहे का?")) {
       return;
     }
     try {
@@ -194,7 +215,9 @@ export default function LedgerPage() {
     const text =
       language === "en"
         ? `Farmer Ledger Summary: Your total recorded expense is ${summary.totalExpense} rupees. Total recorded income from sales is ${summary.totalIncome} rupees. Your current cash balance is ${summary.netBalance} rupees.`
-        : `शेतकरी वहीखाते सारांश: आपला आतापर्यंतचा एकूण खर्च ${summary.totalExpense} रुपये आहे. शेतमाल विक्रीतून मिळालेले एकूण उत्पन्न ${summary.totalIncome} रुपये आहे. आपल्या वहीखात्यातील निव्वळ शिल्लक ${summary.netBalance} रुपये आहे.`;
+        : isHi
+          ? `किसान बहीखाता सारांश: कुल दर्ज खर्च ${summary.totalExpense} रुपये है। बिक्री से कुल आय ${summary.totalIncome} रुपये है। वर्तमान नकद शेष ${summary.netBalance} रुपये है।`
+          : `शेतकरी वहीखाते सारांश: आपला आतापर्यंतचा एकूण खर्च ${summary.totalExpense} रुपये आहे. शेतमाल विक्रीतून मिळालेले एकूण उत्पन्न ${summary.totalIncome} रुपये आहे. आपल्या वहीखात्यातील निव्वळ शिल्लक ${summary.netBalance} रुपये आहे.`;
 
     speakWithFallback(text, language);
   };
@@ -231,218 +254,222 @@ export default function LedgerPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50 pb-28 dark:bg-stone-950">
+    <div className="flex min-h-screen flex-col bg-[#FAF8F4] dark:bg-[#121411] text-stone-900 dark:text-stone-100 transition-colors pb-28">
       <Header />
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-3 py-4 space-y-4">
-        {/* Header Card */}
-        <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-          <div className="flex items-center justify-between mb-1.5">
-            <h1 className="text-lg font-extrabold text-stone-900 dark:text-white flex items-center gap-2">
-              <span>📖</span>
-              {language === "en" ? "Farmer Khata & Diary (वहीखाते)" : "शेतकरी वहीखाते व रोजनिशी"}
+      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-4 space-y-4">
+        {/* Top Title & Header Card */}
+        <div className="bg-white dark:bg-[#1E221B] rounded-3xl p-4 md:p-5 shadow-sm border border-stone-200 dark:border-stone-800 space-y-3.5">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg md:text-xl font-bold font-heading text-stone-900 dark:text-stone-100 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-[#1B4332]/10 dark:bg-[#52B788]/20 text-[#1B4332] dark:text-[#52B788] flex items-center justify-center shrink-0">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <span>{isMr ? "शेतकरी वहीखाते व रोजनिशी" : isHi ? "किसान बहीखाता एवं डायरी" : "Farmer Khata & Diary"}</span>
             </h1>
             <ProvenanceBadge type="user" />
           </div>
-          <p className="text-xs text-stone-500 dark:text-stone-400 mb-3">
-            {language === "en"
-              ? "Your digital farm khata: track every rupee spent on seeds, fertilizer, labour, diesel, and sales income."
-              : "आपली डिजिटल शेत वही: बियाणे, खते, मजुरी, डिझेल व शेतमाल विक्रीच्या प्रत्येक रुपयाचा अचूक हिशोब ठेवा."}
+          <p className="text-xs text-stone-600 dark:text-stone-400 pl-10">
+            {isMr
+              ? "बियाणे, खते, मजुरी, डिझेल व शेतमाल विक्रीच्या प्रत्येक रुपयाचा अचूक हिशोब ठेवा."
+              : isHi
+                ? "बीज, उर्वरक, मजदूरी, डीजल व फसल बिक्री के हर रुपये का सटीक हिसाब।"
+                : "Digital farm khata: track every rupee spent on seeds, fertilizer, labour, diesel, and sales."}
           </p>
 
           {/* Top 3 Financial Cards */}
           <div className="grid grid-cols-3 gap-2 pt-1">
             {/* Balance */}
-            <div className="rounded-xl bg-gradient-to-br from-emerald-800 to-emerald-950 p-2.5 text-white shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-200 block">
-                {language === "en" ? "Cash Balance" : "एकूण शिल्लक"}
+            <div className="rounded-2xl bg-gradient-to-br from-[#1B4332] to-[#0F281E] p-3 text-white shadow-sm border border-[#2D6A4F]/30">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">
+                {isMr ? "एकूण शिल्लक" : isHi ? "शुद्ध शेष" : "Cash Balance"}
               </span>
-              <p className="text-base font-extrabold mt-0.5">
+              <p className="text-base md:text-lg font-black font-mono mt-0.5 tabular-nums">
                 ₹{summary.netBalance.toLocaleString("en-IN")}
               </p>
-              <span className="text-[9px] text-emerald-300 font-medium block">
-                {summary.netBalance >= 0 ? "✓ बचत/शिल्लक" : "तुटवडा"}
+              <span className="text-[10px] text-emerald-300 font-medium block">
+                {summary.netBalance >= 0 ? (isMr ? "✓ बचत/शिल्लक" : "✓ Surplus") : (isMr ? "तुटवडा" : "Deficit")}
               </span>
             </div>
 
             {/* Total Expense */}
-            <div className="rounded-xl bg-rose-50 p-2.5 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40">
-              <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block">
-                {language === "en" ? "Total Spent" : "एकूण खर्च"}
+            <div className="rounded-2xl bg-rose-50/80 p-3 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/60">
+              <span className="text-[10px] font-bold text-rose-800 dark:text-rose-300 block uppercase">
+                {isMr ? "एकूण खर्च" : isHi ? "कुल खर्च" : "Total Spent"}
               </span>
-              <p className="text-sm font-extrabold text-rose-600 dark:text-rose-400 mt-0.5">
+              <p className="text-sm md:text-base font-black font-mono text-rose-700 dark:text-rose-400 mt-0.5 tabular-nums">
                 ₹{summary.totalExpense.toLocaleString("en-IN")}
               </p>
-              <span className="text-[9px] text-stone-500 block">
-                {transactions.filter((t) => t.type === "expense").length} नोंदी
+              <span className="text-[10px] text-stone-500 block">
+                {transactions.filter((t) => t.type === "expense").length} {isMr ? "नोंदी" : "entries"}
               </span>
             </div>
 
             {/* Total Income */}
-            <div className="rounded-xl bg-emerald-50 p-2.5 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/40">
-              <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block">
-                {language === "en" ? "Total Income" : "एकूण जमा"}
+            <div className="rounded-2xl bg-emerald-50/80 p-3 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/60">
+              <span className="text-[10px] font-bold text-emerald-800 dark:text-emerald-300 block uppercase">
+                {isMr ? "एकूण जमा" : isHi ? "कुल जमा" : "Total Income"}
               </span>
-              <p className="text-sm font-extrabold text-emerald-700 dark:text-emerald-400 mt-0.5">
+              <p className="text-sm md:text-base font-black font-mono text-emerald-700 dark:text-emerald-400 mt-0.5 tabular-nums">
                 ₹{summary.totalIncome.toLocaleString("en-IN")}
               </p>
-              <span className="text-[9px] text-stone-500 block">
-                {transactions.filter((t) => t.type === "income").length} विक्री नोंदी
+              <span className="text-[10px] text-stone-500 block">
+                {transactions.filter((t) => t.type === "income").length} {isMr ? "विक्री" : "sales"}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-3 pt-2 border-t border-stone-100 dark:border-stone-800">
+          <div className="flex items-center justify-between mt-2 pt-2.5 border-t border-stone-100 dark:border-stone-800">
             <button
               onClick={handleReadLedger}
-              className="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1.5"
+              className="text-xs font-bold text-[#1B4332] dark:text-[#52B788] hover:underline flex items-center gap-1.5 py-1 min-h-[36px]"
             >
-              <span>🔊</span>
-              <span>{language === "en" ? "Listen to Balance" : "हिशोब ऐका (बोला)"}</span>
+              <Volume2 className="w-4 h-4" />
+              <span>{isMr ? "हिशोब ऐका (बोला)" : isHi ? "हिसाब सुनें" : "Listen to Balance"}</span>
             </button>
-            <span className="text-[11px] text-stone-500">
-              {transactions.length} {language === "en" ? "total transactions" : "एकूण व्यवहार नोंदवले"}
+            <span className="text-[11px] text-stone-500 font-medium">
+              {transactions.length} {isMr ? "एकूण व्यवहार नोंदवले" : isHi ? "कुल प्रविष्टियां" : "total transactions"}
             </span>
           </div>
         </div>
 
         {/* View Switcher Tabs */}
-        <div className="flex rounded-xl bg-stone-200/80 p-1 dark:bg-stone-800 text-xs font-bold">
+        <div className="grid grid-cols-2 gap-1.5 bg-stone-200/70 dark:bg-stone-900/80 p-1.5 rounded-2xl">
           <button
             onClick={() => setActiveTab("diary")}
-            className={`flex-1 py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 min-h-[44px] ${
               activeTab === "diary"
-                ? "bg-white text-stone-900 shadow-sm dark:bg-stone-900 dark:text-white"
-                : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                ? "bg-white dark:bg-[#1E221B] text-[#1B4332] dark:text-[#52B788] shadow-sm font-extrabold"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
             }`}
           >
-            <span>📝</span>
-            <span>{language === "en" ? "Farmer Diary (रोजनिशी)" : "शेतकरी डायरी (सर्व नोंदी)"}</span>
+            <BookOpen className="w-4 h-4" />
+            <span>{isMr ? "शेतकरी डायरी (नोंदी)" : isHi ? "बहीखाता डायरी" : "Farmer Diary"}</span>
           </button>
 
           <button
             onClick={() => setActiveTab("variance")}
-            className={`flex-1 py-2 rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+            className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 min-h-[44px] ${
               activeTab === "variance"
-                ? "bg-white text-stone-900 shadow-sm dark:bg-stone-900 dark:text-white"
-                : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                ? "bg-white dark:bg-[#1E221B] text-[#1B4332] dark:text-[#52B788] shadow-sm font-extrabold"
+                : "text-stone-600 dark:text-stone-400 hover:text-stone-900"
             }`}
           >
-            <span>📊</span>
-            <span>{language === "en" ? "Crop Plan vs Actual" : "पीकनिहाय ताळेबंद (Variance)"}</span>
+            <FileSpreadsheet className="w-4 h-4" />
+            <span>{isMr ? "पीकनिहाय ताळेबंद (Variance)" : isHi ? "फसल तुलना (Variance)" : "Plan vs Actual"}</span>
           </button>
         </div>
 
         {/* ================= TAB 1: FARMER DIARY (वहीखाते रोजनिशी) ================= */}
         {activeTab === "diary" && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4">
             {/* Add New Transaction Entry Form */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 space-y-3">
+            <div className="rounded-3xl bg-white dark:bg-[#1E221B] p-4 md:p-5 shadow-sm border border-stone-200 dark:border-stone-800 space-y-3.5">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
-                  <span>➕</span>
-                  {language === "en" ? "Record New Entry in Khata" : "वहीखात्यात नवीन नोंद करा"}
+                  <Plus className="w-4 h-4 text-[#1B4332] dark:text-[#52B788]" />
+                  <span>{isMr ? "वहीखात्यात नवीन नोंद करा" : isHi ? "नई प्रविष्टि जोड़ें" : "Record New Entry"}</span>
                 </h2>
                 {feedbackMsg && (
-                  <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 px-2 py-0.5 rounded-full dark:bg-emerald-950/40">
+                  <span className="text-[11px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full">
                     {feedbackMsg}
                   </span>
                 )}
               </div>
 
               {/* Type Toggle: Expense vs Income */}
-              <div className="flex rounded-xl bg-stone-100 p-1 dark:bg-stone-800 text-xs font-bold">
+              <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setEntryType("expense")}
-                  className={`flex-1 py-2 rounded-lg transition-all ${
+                  className={`flex-1 py-3 px-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 min-h-[48px] ${
                     entryType === "expense"
-                      ? "bg-rose-600 text-white shadow-sm"
-                      : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                      ? "bg-rose-700 text-white shadow-sm font-extrabold"
+                      : "bg-stone-100 dark:bg-stone-900 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-800"
                   }`}
                 >
-                  💸 {language === "en" ? "Record Expense" : "झालेला खर्च नोंदवा"}
+                  <TrendingDown className="w-4 h-4" />
+                  <span>{isMr ? "झालेला खर्च नोंदवा" : isHi ? "खर्च दर्ज करें" : "Record Expense"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setEntryType("income")}
-                  className={`flex-1 py-2 rounded-lg transition-all ${
+                  className={`flex-1 py-3 px-3 rounded-2xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 min-h-[48px] ${
                     entryType === "income"
-                      ? "bg-emerald-700 text-white shadow-sm"
-                      : "text-stone-600 hover:text-stone-900 dark:text-stone-400"
+                      ? "bg-[#1B4332] text-white shadow-sm font-extrabold"
+                      : "bg-stone-100 dark:bg-stone-900 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-800"
                   }`}
                 >
-                  💰 {language === "en" ? "Record Sales Income" : "शेतमाल विक्री / जमा"}
+                  <TrendingUp className="w-4 h-4" />
+                  <span>{isMr ? "शेतमाल विक्री / जमा" : isHi ? "आय दर्ज करें" : "Record Sale Income"}</span>
                 </button>
               </div>
 
               <form onSubmit={handleSaveEntry} className="space-y-3 pt-1">
-                {/* Crop / Plan Linker (Optional: can be general farm or specific plan) */}
+                {/* Crop / Plan Linker */}
                 <div>
-                  <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                    {language === "en" ? "Link to Crop / Activity:" : "पीक किंवा खाते निवडा:"}
+                  <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                    {isMr ? "पीक किंवा खाते निवडा:" : isHi ? "फसल चुनें:" : "Link to Crop Plan:"}
                   </label>
                   <select
                     value={selectedPlanId}
                     onChange={(e) => setSelectedPlanId(e.target.value)}
-                    className="w-full rounded-xl border border-stone-300 bg-white p-2 text-xs font-semibold text-stone-900 focus:border-emerald-600 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                    className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-semibold text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                   >
                     <option value="">🌾 सामान्य शेती खर्च (General Farm Diary)</option>
                     {plans.map((p) => (
                       <option key={p.id} value={p.id}>
-                        🌱 {p.cropNameMr} ({p.areaAcre} एकर)
+                        🌱 {p.cropNameMr} ({p.areaAcre} {isMr ? "एकर" : "ac"})
                       </option>
                     ))}
                   </select>
                 </div>
 
                 {entryType === "expense" ? (
-                  <>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                          खर्च प्रकार (Category):
-                        </label>
-                        <select
-                          value={category}
-                          onChange={(e) => setCategory(e.target.value)}
-                          className="w-full rounded-xl border border-stone-300 bg-white p-2 text-xs font-medium text-stone-900 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
-                        >
-                          <option value="Fertilizer">🧪 खते (Fertilizer)</option>
-                          <option value="Seed">🌱 बियाणे (Seed)</option>
-                          <option value="Labour">👥 मजुरी (Labour)</option>
-                          <option value="Pesticide">🧴 कीटकनाशके (Pesticide)</option>
-                          <option value="Machinery">🚜 ट्रॅक्टर / डिझेल (Machinery)</option>
-                          <option value="Irrigation">💧 वीजबिल / पाणी (Irrigation)</option>
-                          <option value="Harvesting">🌾 काढणी / तोडणी (Harvesting)</option>
-                          <option value="Transport">🚚 वाहतूक / हमाली (Transport)</option>
-                          <option value="Other">📋 इतर खर्च (Other)</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                          रक्कम (₹ Amount): *
-                        </label>
-                        <input
-                          type="number"
-                          required
-                          min="1"
-                          placeholder="उदा. २५००"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="w-full rounded-xl border border-stone-300 p-2 text-xs font-bold text-stone-900 focus:border-rose-600 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
-                        />
-                      </div>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                        {isMr ? "खर्च प्रकार:" : isHi ? "श्रेणी:" : "Category:"}
+                      </label>
+                      <select
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-semibold text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[46px]"
+                      >
+                        <option value="Fertilizer">🧪 खते (Fertilizer)</option>
+                        <option value="Seed">🌱 बियाणे (Seed)</option>
+                        <option value="Labour">👥 मजुरी (Labour)</option>
+                        <option value="Pesticide">🧴 कीटकनाशके (Pesticide)</option>
+                        <option value="Machinery">🚜 ट्रॅक्टर / डिझेल (Machinery)</option>
+                        <option value="Irrigation">💧 वीजबिल / पाणी (Irrigation)</option>
+                        <option value="Harvesting">🌾 काढणी / तोडणी (Harvesting)</option>
+                        <option value="Transport">🚚 वाहतूक / हमाली (Transport)</option>
+                        <option value="Other">📋 इतर खर्च (Other)</option>
+                      </select>
                     </div>
-                  </>
+
+                    <div>
+                      <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                        {isMr ? "रक्कम (₹): *" : isHi ? "राशि (₹): *" : "Amount (₹): *"}
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        min="1"
+                        placeholder="उदा. २५००"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-black font-mono text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[46px]"
+                      />
+                    </div>
+                  </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                          विक्री प्रमाण (क्विंटल):
+                        <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                          {isMr ? "विक्री प्रमाण (क्विंटल):" : isHi ? "मात्रा (क्विंटल):" : "Quantity (Qtl):"}
                         </label>
                         <input
                           type="number"
@@ -451,13 +478,13 @@ export default function LedgerPage() {
                           placeholder="उदा. १५.५"
                           value={quantityQtl}
                           onChange={(e) => setQuantityQtl(e.target.value)}
-                          className="w-full rounded-xl border border-stone-300 p-2 text-xs font-bold text-stone-900 focus:border-emerald-600 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                          className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-bold font-mono text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                         />
                       </div>
 
                       <div>
-                        <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                          दर (₹ प्रति क्विंटल):
+                        <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                          {isMr ? "दर (₹ प्रति क्विंटल):" : isHi ? "दर (₹/क्विंटल):" : "Rate (₹/Qtl):"}
                         </label>
                         <input
                           type="number"
@@ -465,48 +492,48 @@ export default function LedgerPage() {
                           placeholder="उदा. २४५०"
                           value={ratePerQtl}
                           onChange={(e) => setRatePerQtl(e.target.value)}
-                          className="w-full rounded-xl border border-stone-300 p-2 text-xs font-bold text-stone-900 focus:border-emerald-600 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                          className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-bold font-mono text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                        बाजार समिती / व्यापारी नाव:
+                      <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                        {isMr ? "बाजार समिती / व्यापारी नाव:" : isHi ? "मंडी / व्यापारी:" : "Mandi / Buyer:"}
                       </label>
                       <input
                         type="text"
                         value={mandiName}
                         onChange={(e) => setMandiName(e.target.value)}
-                        className="w-full rounded-xl border border-stone-300 p-2 text-xs font-medium text-stone-900 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                        className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-medium text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                       />
                     </div>
                   </>
                 )}
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                      तारीख (Date):
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      {isMr ? "तारीख (Date):" : isHi ? "तारीख:" : "Date:"}
                     </label>
                     <input
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 p-2 text-xs font-medium text-stone-900 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                      className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-medium text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                      तपशील / पावती (Notes):
+                    <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block mb-1">
+                      {isMr ? "तपशील / पावती (Notes):" : isHi ? "विवरण (Notes):" : "Notes:"}
                     </label>
                     <input
                       type="text"
-                      placeholder="उदा. २ पोती DAP किंवा ट्रॅक्टर"
+                      placeholder="उदा. २ पोती DAP"
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
-                      className="w-full rounded-xl border border-stone-300 p-2 text-xs font-medium text-stone-900 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                      className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-medium text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                     />
                   </div>
                 </div>
@@ -514,101 +541,103 @@ export default function LedgerPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className={`w-full py-3 rounded-xl text-xs font-bold text-white shadow active:scale-95 transition-all min-h-[48px] ${
-                    entryType === "expense" ? "bg-rose-600 hover:bg-rose-700" : "bg-emerald-700 hover:bg-emerald-800"
+                  className={`w-full py-3.5 rounded-2xl text-xs font-bold text-white shadow-md active:scale-95 transition-all min-h-[52px] ${
+                    entryType === "expense" ? "bg-rose-700 hover:bg-rose-800" : "bg-[#1B4332] hover:bg-[#2D6A4F]"
                   }`}
                 >
                   {saving
-                    ? "नोंद जतन करत आहे..."
+                    ? (isMr ? "नोंद जतन करत आहे..." : "Saving...")
                     : entryType === "expense"
-                    ? "💸 वहीखात्यात खर्च जतन करा (Save Expense)"
-                    : "💰 वहीखात्यात विक्री जमा करा (Save Sale Income)"}
+                      ? (isMr ? "💸 वहीखात्यात खर्च जतन करा (Save Expense)" : "Save Expense")
+                      : (isMr ? "💰 वहीखात्यात विक्री जमा करा (Save Sale Income)" : "Save Sale Income")}
                 </button>
               </form>
             </div>
 
             {/* Transaction Passbook & Filter Feed */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 space-y-3">
+            <div className="rounded-3xl bg-white dark:bg-[#1E221B] p-4 md:p-5 shadow-sm border border-stone-200 dark:border-stone-800 space-y-3.5">
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                  {language === "en" ? "Diary Passbook History" : "रोजनिशी व्यवहार नोंदवही"}
+                  {isMr ? "रोजनिशी व्यवहार नोंदवही" : isHi ? "व्यवहार इतिहास" : "Diary Passbook History"}
                 </h3>
                 {/* Filter Pills */}
-                <div className="flex gap-1 text-[11px]">
+                <div className="flex gap-1 text-xs">
                   <button
                     onClick={() => setFilterType("all")}
-                    className={`rounded-lg px-2 py-0.5 font-bold transition-all ${
+                    className={`rounded-xl px-2.5 py-1 font-bold transition-all min-h-[32px] ${
                       filterType === "all"
-                        ? "bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900"
-                        : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
+                        ? "bg-[#1B4332] text-white"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                     }`}
                   >
-                    सर्व ({transactions.length})
+                    {isMr ? "सर्व" : "All"} ({transactions.length})
                   </button>
                   <button
                     onClick={() => setFilterType("expense")}
-                    className={`rounded-lg px-2 py-0.5 font-bold transition-all ${
+                    className={`rounded-xl px-2.5 py-1 font-bold transition-all min-h-[32px] ${
                       filterType === "expense"
-                        ? "bg-rose-600 text-white"
-                        : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
+                        ? "bg-rose-700 text-white"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                     }`}
                   >
-                    खर्च
+                    {isMr ? "खर्च" : "Spent"}
                   </button>
                   <button
                     onClick={() => setFilterType("income")}
-                    className={`rounded-lg px-2 py-0.5 font-bold transition-all ${
+                    className={`rounded-xl px-2.5 py-1 font-bold transition-all min-h-[32px] ${
                       filterType === "income"
                         ? "bg-emerald-700 text-white"
-                        : "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
+                        : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400"
                     }`}
                   >
-                    जमा
+                    {isMr ? "जमा" : "Income"}
                   </button>
                 </div>
               </div>
 
               {filteredTransactions.length === 0 ? (
-                <div className="p-6 text-center text-xs text-stone-400">
-                  <span className="text-2xl block mb-1">📖</span>
-                  {language === "en"
-                    ? "No transactions recorded yet. Use the form above to record your first farm expense or income!"
-                    : "अद्याप कोणतीही नोंद नाही. वर दिलेला फॉर्म वापरून पहिला खर्च किंवा शेतमाल विक्री नोंदवा!"}
+                <div className="p-8 text-center text-xs text-stone-400 space-y-1">
+                  <BookOpen className="w-8 h-8 mx-auto text-stone-300 mb-2" />
+                  <p className="font-semibold text-stone-600 dark:text-stone-400">
+                    {isMr
+                      ? "अद्याप कोणतीही नोंद नाही. वर दिलेला फॉर्म वापरून पहिला खर्च किंवा शेतमाल विक्री नोंदवा!"
+                      : "No transactions recorded yet. Record your first farm expense or income above!"}
+                  </p>
                 </div>
               ) : (
                 <div className="divide-y divide-stone-100 dark:divide-stone-800">
                   {filteredTransactions.map((item) => (
                     <div
                       key={item.id}
-                      className="py-2.5 flex items-center justify-between text-xs hover:bg-stone-50 dark:hover:bg-stone-850 px-1 rounded-lg transition-colors"
+                      className="py-3 flex items-center justify-between text-xs hover:bg-stone-50 dark:hover:bg-stone-900/40 px-1 rounded-xl transition-colors"
                     >
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-lg p-1.5 rounded-xl bg-stone-100 dark:bg-stone-800">
+                      <div className="flex items-start gap-3">
+                        <span className="text-lg p-2 rounded-2xl bg-stone-100 dark:bg-stone-800 shrink-0">
                           {getCategoryIcon(item.category, item.type)}
                         </span>
                         <div>
-                          <p className="font-bold text-stone-900 dark:text-white flex items-center gap-1.5">
+                          <p className="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5 flex-wrap">
                             <span>
                               {item.type === "expense"
                                 ? item.category || "इतर खर्च"
                                 : item.mandiName
-                                ? `विक्री (${item.mandiName})`
-                                : "शेतमाल विक्री"}
+                                  ? `विक्री (${item.mandiName})`
+                                  : "शेतमाल विक्री"}
                             </span>
                             {item.cropNameMr ? (
-                              <span className="text-[10px] rounded-full bg-emerald-100 text-emerald-800 px-1.5 py-0.2 font-semibold dark:bg-emerald-950 dark:text-emerald-300">
+                              <span className="text-[10px] rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 font-bold">
                                 {item.cropNameMr}
                               </span>
                             ) : (
-                              <span className="text-[10px] rounded-full bg-stone-100 text-stone-600 px-1.5 py-0.2 font-normal dark:bg-stone-800 dark:text-stone-400">
-                                सामान्य शेत
+                              <span className="text-[10px] rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 px-2 py-0.5 font-normal">
+                                {isMr ? "सामान्य शेत" : "Farm"}
                               </span>
                             )}
                           </p>
-                          <p className="text-[10px] text-stone-500 mt-0.5">
+                          <p className="text-[11px] text-stone-500 mt-0.5">
                             {item.notes && <span className="font-medium mr-1.5">{item.notes} •</span>}
                             {item.quantityQuintal && (
-                              <span className="mr-1.5">{item.quantityQuintal} क्विंटल @ ₹{item.ratePerQuintal} •</span>
+                              <span className="mr-1.5 font-mono">{item.quantityQuintal} qtl @ ₹{item.ratePerQuintal} •</span>
                             )}
                             {new Date(item.date).toLocaleDateString("en-IN", {
                               day: "numeric",
@@ -619,24 +648,22 @@ export default function LedgerPage() {
                         </div>
                       </div>
 
-                      <div className="text-right flex items-center gap-2">
-                        <div>
-                          <p
-                            className={`font-extrabold text-sm ${
-                              item.type === "expense"
-                                ? "text-rose-600 dark:text-rose-400"
-                                : "text-emerald-700 dark:text-emerald-400"
-                            }`}
-                          >
-                            {item.type === "expense" ? "-" : "+"}₹{item.amount.toLocaleString("en-IN")}
-                          </p>
-                        </div>
+                      <div className="text-right flex items-center gap-2.5">
+                        <p
+                          className={`font-black font-mono text-sm tabular-nums ${
+                            item.type === "expense"
+                              ? "text-rose-600 dark:text-rose-400"
+                              : "text-emerald-700 dark:text-emerald-400"
+                          }`}
+                        >
+                          {item.type === "expense" ? "-" : "+"}₹{item.amount.toLocaleString("en-IN")}
+                        </p>
                         <button
                           onClick={() => handleDeleteEntry(item.id, item.type)}
                           title="नोंद वगळा"
-                          className="text-stone-400 hover:text-rose-600 p-1 text-xs"
+                          className="text-stone-400 hover:text-rose-600 p-1.5 text-xs rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
                         >
-                          ✕
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -649,29 +676,29 @@ export default function LedgerPage() {
 
         {/* ================= TAB 2: CROP PLAN VARIANCE (पीकनिहाय ताळेबंद) ================= */}
         {activeTab === "variance" && (
-          <div className="space-y-4 animate-fade-in">
+          <div className="space-y-4">
             {/* Select Active Plan */}
-            <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800">
-              <label className="text-[11px] font-bold text-stone-700 dark:text-stone-300 block mb-1">
-                {language === "en" ? "Select Crop Plan to Analyze:" : "तपासणीसाठी पीक नियोजन निवडा:"}
+            <div className="rounded-3xl bg-white dark:bg-[#1E221B] p-4 md:p-5 shadow-sm border border-stone-200 dark:border-stone-800 space-y-2">
+              <label className="text-xs font-bold text-stone-700 dark:text-stone-300 block">
+                {isMr ? "तपासणीसाठी पीक नियोजन निवडा:" : isHi ? "पीक योजना चुनें:" : "Select Crop Plan to Analyze:"}
               </label>
               {plans.length > 0 ? (
                 <select
                   value={variancePlanId}
                   onChange={(e) => setVariancePlanId(e.target.value)}
-                  className="w-full rounded-xl border border-stone-300 bg-white p-2.5 text-xs font-bold text-stone-900 focus:border-emerald-600 dark:border-stone-700 dark:bg-stone-800 dark:text-white"
+                  className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-3 text-xs font-bold text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-[#1B4332] min-h-[46px]"
                 >
                   {plans.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.cropNameMr} ({p.areaAcre} एकर)
+                      {p.cropNameMr} ({p.areaAcre} {isMr ? "एकर" : "ac"})
                     </option>
                   ))}
                 </select>
               ) : (
                 <div className="text-xs text-stone-500 py-2">
-                  कोणतेही पीक नियोजन उपलब्ध नाही.{" "}
-                  <Link href="/planner/new" className="text-emerald-700 font-bold underline">
-                    नवीन पीक नियोजन तयार करा →
+                  {isMr ? "कोणतेही पीक नियोजन उपलब्ध नाही." : "No crop plan available."}{" "}
+                  <Link href="/planner/new" className="text-[#1B4332] dark:text-[#52B788] font-bold underline">
+                    {isMr ? "नवीन पीक नियोजन तयार करा →" : "Create new plan →"}
                   </Link>
                 </div>
               )}
@@ -679,62 +706,62 @@ export default function LedgerPage() {
 
             {/* Variance Details */}
             {variancePlanDetail && (
-              <div className="rounded-2xl bg-white p-4 shadow-sm border border-stone-200 dark:bg-stone-900 dark:border-stone-800 space-y-3">
-                <div className="flex items-center justify-between border-b border-stone-100 pb-2 dark:border-stone-800">
+              <div className="rounded-3xl bg-white dark:bg-[#1E221B] p-4 md:p-5 shadow-sm border border-stone-200 dark:border-stone-800 space-y-3.5">
+                <div className="flex items-center justify-between border-b border-stone-100 dark:border-stone-800 pb-2.5">
                   <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400">
-                    {language === "en" ? "Planned vs Actual Variance" : "नियोजित वि. प्रत्यक्ष ताळेबंद"}
+                    {isMr ? "नियोजित वि. प्रत्यक्ष ताळेबंद" : "Planned vs Actual Variance"}
                   </h2>
-                  <span className="text-xs font-bold text-emerald-700">
+                  <span className="text-xs font-bold text-[#1B4332] dark:text-[#52B788]">
                     {variancePlanDetail.cropData?.nameMr}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
                   {/* Cost Variance */}
-                  <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                    <span className="text-[10px] text-stone-500 block">प्रत्यक्ष खर्च:</span>
-                    <p className="font-extrabold text-sm text-stone-900 dark:text-white mt-0.5">
+                  <div className="rounded-2xl bg-stone-50 dark:bg-stone-900/60 p-3.5 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                    <span className="text-[10px] text-stone-500 block uppercase font-medium">{isMr ? "प्रत्यक्ष खर्च:" : "Actual Spent:"}</span>
+                    <p className="font-black font-mono text-base text-stone-900 dark:text-stone-100 tabular-nums">
                       ₹{variancePlanDetail.ledger.actualExpenseTotal.toLocaleString("en-IN")}
                     </p>
-                    <p className="text-[10px] text-stone-500">
-                      नियोजित: ₹{variancePlanDetail.calculation.totalCost.toLocaleString("en-IN")}
+                    <p className="text-[11px] text-stone-500 font-mono">
+                      {isMr ? "नियोजित:" : "Planned:"} ₹{variancePlanDetail.calculation.totalCost.toLocaleString("en-IN")}
                     </p>
                     <p
-                      className={`text-[10px] font-bold mt-1 ${
+                      className={`text-[11px] font-bold font-mono mt-1 ${
                         variancePlanDetail.ledger.actualExpenseTotal <= variancePlanDetail.calculation.totalCost
-                          ? "text-emerald-700"
+                          ? "text-emerald-700 dark:text-emerald-400"
                           : "text-rose-600"
                       }`}
                     >
-                      तफावत: {variancePlanDetail.ledger.varianceCost >= 0 ? `+₹${variancePlanDetail.ledger.varianceCost}` : `-₹${Math.abs(variancePlanDetail.ledger.varianceCost)}`}
+                      {isMr ? "तफावत:" : "Diff:"} {variancePlanDetail.ledger.varianceCost >= 0 ? `+₹${variancePlanDetail.ledger.varianceCost}` : `-₹${Math.abs(variancePlanDetail.ledger.varianceCost)}`}
                     </p>
                   </div>
 
                   {/* Income Realized */}
-                  <div className="rounded-xl bg-stone-50 p-3 text-xs dark:bg-stone-850 border border-stone-200 dark:border-stone-800">
-                    <span className="text-[10px] text-stone-500 block">विक्री उत्पन्न:</span>
-                    <p className="font-extrabold text-sm text-emerald-700 dark:text-emerald-400 mt-0.5">
+                  <div className="rounded-2xl bg-stone-50 dark:bg-stone-900/60 p-3.5 text-xs border border-stone-200 dark:border-stone-800 space-y-1">
+                    <span className="text-[10px] text-stone-500 block uppercase font-medium">{isMr ? "विक्री उत्पन्न:" : "Actual Income:"}</span>
+                    <p className="font-black font-mono text-base text-emerald-700 dark:text-emerald-400 tabular-nums">
                       ₹{variancePlanDetail.ledger.actualIncomeTotal.toLocaleString("en-IN")}
                     </p>
-                    <p className="text-[10px] text-stone-500">
-                      अपेक्षित: ₹{variancePlanDetail.calculation.grossRevenue.toLocaleString("en-IN")}
+                    <p className="text-[11px] text-stone-500 font-mono">
+                      {isMr ? "अपेक्षित:" : "Expected:"} ₹{variancePlanDetail.calculation.grossRevenue.toLocaleString("en-IN")}
                     </p>
-                    <p className="text-[10px] font-bold mt-1 text-stone-700 dark:text-stone-300">
-                      निव्वळ नफा: ₹{variancePlanDetail.ledger.actualNetProfit.toLocaleString("en-IN")}
+                    <p className="text-[11px] font-bold font-mono mt-1 text-stone-700 dark:text-stone-300">
+                      {isMr ? "निव्वळ नफा:" : "Net Profit:"} ₹{variancePlanDetail.ledger.actualNetProfit.toLocaleString("en-IN")}
                     </p>
                   </div>
                 </div>
 
                 {/* Self-Calibrating Learning Banner */}
-                <div className="rounded-xl bg-emerald-50 p-3 text-xs border border-emerald-200 text-emerald-900 dark:bg-emerald-950/30 dark:border-emerald-900/50 dark:text-emerald-200">
-                  <p className="font-bold flex items-center gap-1">
-                    <span>🧠</span>
-                    {language === "en" ? "Self-Learning Soil Calibration:" : "शेतकरी डेटा आधारित अचूक अंदाज:"}
+                <div className="rounded-2xl bg-emerald-50/80 p-3.5 text-xs border border-emerald-200 dark:border-emerald-900/60 text-emerald-950 dark:text-emerald-200 dark:bg-emerald-950/30 space-y-1">
+                  <p className="font-bold font-heading flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-emerald-600" />
+                    <span>{isMr ? "शेतकरी डेटा आधारित अचूक अंदाज:" : "Self-Learning Soil Calibration:"}</span>
                   </p>
-                  <p className="text-[11px] leading-relaxed mt-0.5">
-                    {language === "en"
-                      ? "Every ledger entry trains your farm's unique performance profile for more accurate next-season planning."
-                      : "आपण नोंदवलेला प्रत्येक प्रत्यक्ष खर्च व शेतमाल उतारा आपल्या जमिनीच्या गुणवत्तेची नोंद ठेवतो, ज्यामुळे पुढील हंगामात आणखी अचूक अंदाज मिळतो."}
+                  <p className="text-[11px] leading-relaxed text-emerald-900/90 dark:text-emerald-300/90">
+                    {isMr
+                      ? "आपण नोंदवलेला प्रत्येक प्रत्यक्ष खर्च व शेतमाल उतारा आपल्या जमिनीच्या गुणवत्तेची नोंद ठेवतो, ज्यामुळे पुढील हंगामात आणखी अचूक अंदाज मिळतो."
+                      : "Every ledger entry trains your farm's unique performance profile for more accurate next-season planning."}
                   </p>
                 </div>
               </div>
