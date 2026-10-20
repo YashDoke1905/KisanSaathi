@@ -81,12 +81,54 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(parsed);
       } catch (e) {
         console.error("Failed to parse Sarvam Python output:", result.stdout, e);
-        return NextResponse.json({
-          success: false,
-          fallback: true,
-          error: "parse_error",
-          raw: result.stdout,
+      }
+    }
+
+    // Direct HTTP Fallback for Cloud Serverless environments (e.g. Vercel) where Python may not be installed
+    const apiKey = process.env.SARVAM_API_KEY || "sk_3mdxptw6_VbK9sLAWhL6MGaMz4hIsKvRs";
+    if (apiKey) {
+      try {
+        const langMap: Record<string, string> = { mr: "mr-IN", hi: "hi-IN", en: "en-IN" };
+        const targetLang = langMap[language] || "mr-IN";
+        const sarvamRes = await fetch("https://api.sarvam.ai/text-to-speech", {
+          method: "POST",
+          headers: {
+            "api-subscription-key": apiKey,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            inputs: [text.trim().slice(0, 480)],
+            target_language_code: targetLang,
+            speaker: speaker || "shubh",
+            model: "bulbul:v3",
+            pace: Number(pace) || 1.0,
+            enable_preprocessing: true,
+          }),
         });
+
+        const sarvamData = await sarvamRes.json();
+        if (sarvamData.audios && sarvamData.audios.length > 0) {
+          return NextResponse.json({
+            success: true,
+            audioBase64: sarvamData.audios[0],
+            format: "audio/mp3",
+            provider: "sarvamai",
+            model: "bulbul:v3",
+            source: "rest_cloud",
+          });
+        }
+
+        if (sarvamRes.status === 402 || sarvamData.error) {
+          return NextResponse.json({
+            success: false,
+            fallback: true,
+            error: "insufficient_quota",
+            message: sarvamData.error?.message || "No credits available",
+            provider: "sarvamai",
+          });
+        }
+      } catch (cloudErr) {
+        console.warn("Direct Sarvam cloud API fallback error:", cloudErr);
       }
     }
 
